@@ -28,7 +28,7 @@ InvestX bridges this gap by enabling **fractional investment** in vetted local b
 - **Trustless Escrow:** Investor funds are locked on-chain. If funding fails, funds are mathematically guaranteed to be refunded via Soroban contracts.
 
 ## Project Structure
-`	ext
+``text
 InvestX/
 ├── backend/                # Node.js/Express API, AI coordination
 ├── frontend/               # React web application with Freighter wallet
@@ -40,13 +40,13 @@ InvestX/
 │   └── governance-contract/# DAO voting logic
 ├── docs/                   # Supplemental documentation
 └── start-local.ps1         # Convenience script for local startup
-`
+``
 
 ## System Architecture
 
 InvestX uses a hybrid Web2/Web3 architecture. Heavy documents, KYC, and AI scoring run off-chain, while all financial logic, voting, and token ownership is strictly on-chain via Soroban.
 
-`mermaid
+``mermaid
 graph TD
     Client[React Frontend] -->|Freighter Wallet| Network[Stellar Testnet]
     Client -->|REST API| API[Node.js Backend]
@@ -61,7 +61,7 @@ graph TD
         Network --> Reg(Document Registry)
         Network --> Tok(Business Token)
     end
-`
+``
 
 ## Technical Stack
 
@@ -123,24 +123,24 @@ graph TD
 - Freighter wallet funded on Stellar testnet
 
 ### 1) Clone
-`ash
+``bash
 git clone https://github.com/anindhabiswas25/InvestX.git
 cd InvestX
-`
+``
 
 ### 2) Backend
-`ash
+``bash
 cd backend
 npm install
 npm run dev
-`
+``
 
 ### 3) Frontend
-`ash
+``bash
 cd frontend
 npm install
 npm start
-`
+``
 
 ## License
 MIT
