@@ -1,4 +1,5 @@
 ﻿# InvestX - Fully Decentralized Investment Platform
+<img width="2834" height="1636" alt="InvestX" src="https://github.com/user-attachments/assets/03fb2c92-ec81-4295-9871-0a0240e8beb4" />
 
 Community-powered fractional investment platform for local businesses, built on Stellar + Soroban with AI-assisted business scoring and **fully decentralized on-chain governance**. No centralized admin approvals—the community decides everything!
 
