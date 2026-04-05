@@ -4,7 +4,9 @@ Community-powered fractional investment platform for local businesses, built on 
 
 ## Table of Contents
 
-- [Overview](#overview)
+- [Problem Statement](#problem-statement)
+- [Our Solution](#our-solution)
+- [Project Structure](#project-structure)
 - [System Architecture](#system-architecture)
 - [Technical Stack](#technical-stack)
 - [Advanced Features](#advanced-features)
@@ -14,11 +16,33 @@ Community-powered fractional investment platform for local businesses, built on 
 - [Environment Variables](#environment-variables)
 - [License](#license)
 
-## Overview
+## Problem Statement
 
-Small businesses often face financing gaps, and local communities typically cannot participate in early-stage growth opportunities. InvestX addresses both sides by enabling compliant micro-investments in vetted businesses through tokenized ownership and transparent on-chain settlement.
+India has over 15 million small businesses that struggle to access traditional bank financing. Banks typically reject 70%+ of small business loan applications due to strict collateral requirements and lack of formal credit history. Simultaneously, everyday citizens and local patrons have no secure, accessible, and transparent way to invest in the local businesses they already trust, leaving a massive financing and wealth-generation gap.
 
-All platform decisions—from approving new business token launches to verifying monthly revenue dividends—are handled entirely by **on-chain DAO Governance**.
+## Our Solution
+
+InvestX bridges this gap by enabling **fractional investment** in vetted local businesses through blockchain-powered tokenization and decentralized decision-making:
+- **Micro-Investments:** Investors can buy fractional shares in businesses starting at tiny amounts using Stellar-based tokenization.
+- **AI-Powered Fairness:** We use Google Gemini AI to analyze raw business financials and generate unbiased risk assessments.
+- **Fully Decentralized:** No central admin holds power. All business approvals and monthly dividend payouts are verified and executed by the community through a DAO Governance Smart Contract.
+- **Trustless Escrow:** Investor funds are locked on-chain. If funding goals are not met, funds are mathematically guaranteed to be refunded via Soroban contracts.
+
+## Project Structure
+
+```text
+InvestX/
+├── backend/                # Node.js/Express API, AI coordination, off-chain MongoDB models
+├── frontend/               # React web application with Freighter wallet integration
+├── smart-contracts/        # Rust (Soroban) contracts & Hardhat deployment scripts
+│   ├── business-token/     # SEP-41 token factory for businesses
+│   ├── escrow-contract/    # Trustless fundraising escrow
+│   ├── dividend-contract/  # Automated revenue payouts
+│   ├── document-registry/  # Cryptographic hash anchoring for KYC
+│   └── governance-contract/# DAO voting logic
+├── docs/                   # Supplemental documentation
+└── start-local.ps1         # Convenience script for local startup
+```
 
 ## System Architecture
 
