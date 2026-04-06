@@ -27,7 +27,7 @@ const WalletAuthBridge = () => {
     completeSignup,
     cancelSignup 
   } = useWallet();
-  const { walletLogin, logout, user, token } = useAuth();
+  const { logout, user, token } = useAuth();
   const navigate = useNavigate();
   const prevAddress = useRef(null);
   const processing = useRef(false);

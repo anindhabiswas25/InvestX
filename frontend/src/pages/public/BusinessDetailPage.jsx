@@ -25,7 +25,7 @@ import {
 
 const BusinessDetailPage = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  useAuth(); // Initialize auth context
   const { isConnected, connectWallet } = useWallet();
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);

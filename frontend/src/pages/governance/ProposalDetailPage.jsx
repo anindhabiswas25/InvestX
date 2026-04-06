@@ -14,8 +14,6 @@ import {
 import {
   FiArrowLeft,
   FiClock,
-  FiCheckCircle,
-  FiXCircle,
   FiExternalLink,
   FiShield,
   FiFileText,
