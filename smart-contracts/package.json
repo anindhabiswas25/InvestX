@@ -5,6 +5,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "test:ci": "npm run compile",
     "deploy": "hardhat run scripts/deploy.js --network stellarTestnet",
     "deploy:stellar": "node scripts/deployStellarContracts.js all",
     "deploy:stellar:token": "node scripts/deployStellarContracts.js token",

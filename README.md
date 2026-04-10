@@ -143,5 +143,12 @@ npm install
 npm start
 ```
 
+## CI/CD
+
+- CI: GitHub Actions workflows under `.github/workflows/`
+- Frontend CD: Vercel (`frontend/` root)
+- Backend CD: Render (`render.yaml`)
+- Full setup guide: `docs/CI-CD-PIPELINE.md`
+
 ## License
 MIT

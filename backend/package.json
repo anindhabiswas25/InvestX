@@ -10,7 +10,8 @@
     "stellar:init-accounts": "node scripts/initializeStellarAccounts.js",
     "stellar:verify": "node scripts/initializeStellarAccounts.js verify",
     "stellar:fund": "node scripts/initializeStellarAccounts.js fund",
-    "test": "node test/governance.test.js"
+    "test": "node test/governance.test.js",
+    "test:ci": "node --test test/health.ci.test.js"
   },
   "keywords": [
     "investx",

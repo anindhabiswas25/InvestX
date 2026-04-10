@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+      contracts: ${{ steps.filter.outputs.contracts }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Filter paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/**'
+            backend:
+              - 'backend/**'
+              - 'render.yaml'
+              - '.github/workflows/**'
+            contracts:
+              - 'smart-contracts/**'
+              - '.github/workflows/**'
+
+  frontend-ci:
+    name: Frontend CI
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run frontend tests
+        env:
+          CI: true
+          REACT_APP_API_URL: https://example-backend.onrender.com
+          REACT_APP_STELLAR_EXPLORER_URL: https://stellar.expert/explorer/testnet
+          REACT_APP_GOVERNANCE_ADDRESS: CTESTGOVERNANCEADDRESS0000000000000000000000000000000
+        run: npm run test:ci
+
+      - name: Build frontend
+        env:
+          CI: false
+          REACT_APP_API_URL: https://example-backend.onrender.com
+          REACT_APP_STELLAR_EXPLORER_URL: https://stellar.expert/explorer/testnet
+          REACT_APP_GOVERNANCE_ADDRESS: CTESTGOVERNANCEADDRESS0000000000000000000000000000000
+        run: npm run build
+
+  backend-ci:
+    name: Backend CI
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run backend smoke tests
+        env:
+          NODE_ENV: test
+        run: npm run test:ci
+
+  contracts-ci:
+    name: Smart Contracts CI
+    needs: changes
+    if: ${{ needs.changes.outputs.contracts == 'true' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: smart-contracts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: smart-contracts/package-lock.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Compile contracts
+        run: npm run test:ci
