@@ -1,7 +1,7 @@
 ﻿# InvestX - Fully Decentralized Investment Platform
 <img width="2834" height="1636" alt="InvestX" src="https://github.com/user-attachments/assets/03fb2c92-ec81-4295-9871-0a0240e8beb4" />
 
-Community-powered fractional investment platform for local businesses, built on Stellar + Soroban with AI-assisted business scoring and **fully decentralized on-chain governance**. No centralized admin approvals—the community decides everything!
+**Community-powered fractional investment platform for local businesses, built on Stellar + Soroban with AI-assisted business scoring and fully decentralized on-chain governance. No centralized admin approvals—the community decides everything!**
 
 ## Table of Contents
 - [Problem Statement](#problem-statement)
@@ -15,6 +15,14 @@ Community-powered fractional investment platform for local businesses, built on 
 - [Local Setup](#local-setup)
 - [Environment Variables](#environment-variables)
 - [License](#license)
+
+- ## Quick Links
+
+| Resource | Link | 
+|---|---|
+| **Live Demo** | https://investx-iota.vercel.app/ | 
+| **Smart Contract** | https://stellar.expert/explorer/testnet/contract/CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH |
+| **Users Data & Review** | https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?gid=47422734#gid=47422734 |
 
 ## Problem Statement
 
