@@ -5,7 +5,7 @@
 
 ![Track](https://img.shields.io/badge/Track-Web3%20Credit-blue) ![Status](https://img.shields.io/badge/Status-Live%20MVP-brightgreen) ![Network](https://img.shields.io/badge/Network-Stellar%20Testnet-green) ![CI/CD](https://img.shields.io/badge/CI%2FCD-passing-brightgreen)
 
-## Quick Links
+##🔗 Quick Links
 
 | Resource | Link | 
 |----|-----|
@@ -22,11 +22,11 @@
 | **Mobile Responsive** | ✅Done | See screenchot view below |
 | **Registered Users** | ✅Done | [35+ verified users Excel Sheet Data](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?usp=sharing) |
 
-## Problem Statement
+##❗ Problem Statement
 
 India has over 15 million small businesses that struggle to access traditional bank financing. Banks typically reject 70%+ of small business loan applications due to strict collateral requirements and lack of formal credit history. Simultaneously, everyday citizens and local patrons have no secure, accessible, and transparent way to invest in the local businesses they already trust, leaving a massive financing and wealth-generation gap.
 
-## Our Solution
+##💡 Our Solution
 
 InvestX bridges this gap by enabling **fractional investment** in vetted local businesses through blockchain-powered tokenization and decentralized decision-making:
 - **Micro-Investments:** Investors can buy fractional shares in businesses starting at tiny amounts using Stellar-based tokenization.
@@ -34,7 +34,7 @@ InvestX bridges this gap by enabling **fractional investment** in vetted local b
 - **Fully Decentralized:** No central admin holds power. All business approvals and monthly dividend payouts are verified and executed by the community through a DAO Governance Smart Contract.
 - **Trustless Escrow:** Investor funds are locked on-chain. If funding fails, funds are mathematically guaranteed to be refunded via Soroban contracts.
 
-## Project Structure
+##🏗 Project Structure
 ```text
 InvestX/
 ├── backend/                # Node.js/Express API, AI coordination
@@ -149,15 +149,74 @@ graph TD
 | [DATA_INDEXING.md](docs/DATA_INDEXING.md) | Data indexing approach |
 | [FEEDBACK.md](docs/FEEDBACK.md) | User feedback & community |
 
+---
+
 ## Security
 
 See [SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md) for the complete security audit.
+
+---
 
 **Summary:**
 
 - Smart Contract Security: ✅ Pass (93/100)
 - Frontend Security: ✅ Pass (97/100)
 - Infrastructure Security: ✅ Pass (89/100)
+
+---
+
+### Roadmap
+
+- **Decentralized Secondary Market** 
+- **Mobile Native Apps**
+- **Stellar Mainnet Migration** 
+- **Advanced Analytics Dashboard** 
+- **Multi-Language & Localization**
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community!   
+To contribute, please follow these steps:
+
+1. Fork the repository
+
+2. Create a new branch for your feature or bug fix:
+   ```bash
+   git checkout -b feature/YourFeatureName
+
+## 📜 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👥 Team
+
+**Project Lead:** Anindha Biswas  
+
+- GitHub: [Anindha Biswas](https://github.com/your-username)
+- Email: funnypost00@gmail.com  
+
+---
+
+## 🙏 Acknowledgments
+
+- Stellar Development Foundation — Blockchain infrastructure  
+- Soroban — Smart contract platform  
+- Freighter — Stellar wallet  
+
+---
+
+## 📬 Support
+
+For questions, issues, or partnerships:
+
+- 🐛 GitHub Issues: Open an issue in this repository  
+- 📧 Email: funnypost00@gmail.com
+
+---
 
 ## Local Setup
 
@@ -195,3 +254,4 @@ npm start
 
 ## License
 MIT
+
