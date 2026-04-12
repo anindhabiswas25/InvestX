@@ -11,7 +11,7 @@
 |----|-----|
 | **Live Demo** | [Live Link](https://investx-iota.vercel.app/) | 
 | **Smart Contract** | [View on StellarExpert](https://stellar.expert/explorer/testnet/contract/CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH) |
-| **Users Data & Review** | [Users Excel Sheet](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?gid=47422734#gid=47422734) |
+| **Users Data & Review** | [Users Excel Sheet](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?usp=sharing) |
 
 **Level 5 Building Submission Checklist**
 | Requirement | Status | Proof |
@@ -20,7 +20,7 @@
 | **CI/CD Pipeline** | ✅Done | [Check in GitHub](https://github.com/anindhabiswas25/InvestX/actions/workflows/ci.yml) |
 | **Smart Contract Deployed** | ✅Done | CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH |
 | **Mobile Responsive** | ✅Done | See screenchot view below |
-| **Registered Users** | ✅Done | [35+ verified users Excel Sheet Data](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?gid=47422734#gid=47422734) |
+| **Registered Users** | ✅Done | [35+ verified users Excel Sheet Data](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?usp=sharing) |
 
 ## Problem Statement
 
@@ -110,6 +110,13 @@ graph TD
 | **DAO Governance** | CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH |
 | **Sample Transaction Hash** | [View on stellar Expert](https://stellar.expert/explorer/testnet/contract/CAZZHGGQCK4XYSWQOY7NPSU247XMWA4PNJWUA6NU47TPQFK4E6EGVYZZ) |
 
+## 📢 User Feed Implementation
+
+| User Name | User Email | User Wallet Address | Commit ID |
+|----------|-----------|---------------------|-----------|
+| Rupa Das | das@example.com | GDVGCNPYED7FFJ65MAGEP2V7B4HVLJ5HXQQNQE7KSXTDDBMX3LSP2EEB | bcfc71b |
+| Puja Barai | puja@gmail.com | GBEUK7NAW6JIXCAOH7OUJMUKVCE44E4U2EC6LGX2JOEK6LOGZPWX23TO | 9f2293e |
+| Priya Pal | priya@gmail.com | GCVCHO43YMPEHBDWOVKP5Y2XZWEUHCZNPIGJRZAFFFGWMNGO5UVUMCO3 | 36dd3c7 |
 ## Complete User Flows
 
 ### 1. Business Owner Flow
