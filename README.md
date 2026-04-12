@@ -1,23 +1,26 @@
-﻿# InvestX - Fully Decentralized Investment Platform
-<img width="2834" height="1636" alt="InvestX" src="https://github.com/user-attachments/assets/03fb2c92-ec81-4295-9871-0a0240e8beb4" />
+# InvestX - Fully Decentralized Investment Platform
+<img width="2860" height="1563" alt="Screenshot from 2026-04-12 23-13-37" src="https://github.com/user-attachments/assets/f299c8b8-522d-4b7b-a61d-1c126d4a161d" />
 
-Community-powered fractional investment platform for local businesses, built on Stellar + Soroban with AI-assisted business scoring and **fully decentralized on-chain governance**. No centralized admin approvals—the community decides everything!
+**A decentralized, community-governed platform on Stellar + Soroban that enables fractional investment in local businesses with AI-driven scoring and no central authority.**
 
-## Table of Contents
-- [Problem Statement](#problem-statement)
-- [Our Solution](#our-solution)
-- [Project Structure](#project-structure)
-- [System Architecture](#system-architecture)
-- [Technical Stack](#technical-stack)
-- [Advanced Features](#advanced-features)
-- [Deployed Contracts](#deployed-contracts)
-- [User & Business Flows](#complete-user-flows)
-- [Mobile responsive view](#mobile-responsive-view)
-- [Documentation](#documentation)
-- [Security](#security)
-- [Local Setup](#local-setup)
-- [CI/CD Pipeline](#cicd-pipeline)
-- [License](#license)
+![Track](https://img.shields.io/badge/Track-Web3%20Credit-blue) ![Status](https://img.shields.io/badge/Status-Live%20MVP-brightgreen) ![Network](https://img.shields.io/badge/Network-Stellar%20Testnet-green) ![CI/CD](https://img.shields.io/badge/CI%2FCD-passing-brightgreen)
+
+## Quick Links
+
+| Resource | Link | 
+|----|-----|
+| **Live Demo** | [Live Link](https://investx-iota.vercel.app/) | 
+| **Smart Contract** | [View on StellarExpert](https://stellar.expert/explorer/testnet/contract/CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH) |
+| **Users Data & Review** | [Users Excel Sheet](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?usp=sharing) |
+
+**Level 5 Building Submission Checklist**
+| Requirement | Status | Proof |
+|------|------|------|
+| **Live Demo Deployed** | ✅Done |  [Live Link](https://investx-iota.vercel.app/) | 
+| **CI/CD Pipeline** | ✅Done | [Check in GitHub](https://github.com/anindhabiswas25/InvestX/actions/workflows/ci.yml) |
+| **Smart Contract Deployed** | ✅Done | CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH |
+| **Mobile Responsive** | ✅Done | See screenchot view below |
+| **Registered Users** | ✅Done | [35+ verified users Excel Sheet Data](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?usp=sharing) |
 
 ## Problem Statement
 
@@ -66,6 +69,14 @@ graph TD
         Network --> Tok(Business Token)
     end
 ```
+## Mobile Responsive View
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/374cb3fe-e88c-49b8-b2a8-9ca7e1e7d674" width="250"/>
+</p>
+
+
+## CI/CD Pipeline
+<img width="2880" height="1800" alt="Screenshot from 2026-04-11 00-32-39" src="https://github.com/user-attachments/assets/7fea726b-a9e8-449d-b2dd-0a3f972a489a" />
 
 ## Technical Stack
 
@@ -97,7 +108,15 @@ graph TD
 | **Dividend Distributor** | CDH35PFTCU2WXPQ3LW4NFDJADNCEKK7RNH2UUNH5JRKFZ7O7U3UCFY6C |
 | **Document Registry** | CAZZHGGQCK4XYSWQOY7NPSU247XMWA4PNJWUA6NU47TPQFK4E6EGVYZZ |
 | **DAO Governance** | CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH |
+| **Sample Transaction Hash** | [View on stellar Expert](https://stellar.expert/explorer/testnet/contract/CAZZHGGQCK4XYSWQOY7NPSU247XMWA4PNJWUA6NU47TPQFK4E6EGVYZZ) |
 
+## 📢 User Feed Implementation
+
+| User Name | User Email | User Wallet Address | Commit ID |
+|----------|-----------|---------------------|-----------|
+| Rupa Das | das@example.com | GDVGCNPYED7FFJ65MAGEP2V7B4HVLJ5HXQQNQE7KSXTDDBMX3LSP2EEB | bcfc71b |
+| Puja Barai | puja@gmail.com | GBEUK7NAW6JIXCAOH7OUJMUKVCE44E4U2EC6LGX2JOEK6LOGZPWX23TO | 9f2293e |
+| Priya Pal | priya@gmail.com | GCVCHO43YMPEHBDWOVKP5Y2XZWEUHCZNPIGJRZAFFFGWMNGO5UVUMCO3 | 36dd3c7 |
 ## Complete User Flows
 
 ### 1. Business Owner Flow
@@ -119,11 +138,7 @@ graph TD
 2. **Analyze Data:** Read AI-generated risk reports and cryptographically verified document hashes.
 3. **Vote On-Chain:** Sign transactions via Freighter to cast Upvote / Downvote on Soroban.
 
-## Mobile responsive view
-
-Add your mobile responsive screenshots here.
-
-## Documentation
+# Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -140,9 +155,9 @@ See [SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md) for the complete securit
 
 **Summary:**
 
-- Smart Contract Security: ✅ Pass (95/100)
-- Frontend Security: ✅ Pass (90/100)
-- Infrastructure Security: ✅ Pass (85/100)
+- Smart Contract Security: ✅ Pass (93/100)
+- Frontend Security: ✅ Pass (97/100)
+- Infrastructure Security: ✅ Pass (89/100)
 
 ## Local Setup
 
@@ -171,7 +186,7 @@ npm install
 npm start
 ```
 
-## CI/CD Pipeline
+## CI/CD
 
 - CI: GitHub Actions workflows under `.github/workflows/`
 - Frontend CD: Vercel (`frontend/` root)
