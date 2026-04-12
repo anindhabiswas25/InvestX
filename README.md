@@ -5,13 +5,17 @@
 
 ![Track](https://img.shields.io/badge/Track-Web3%20Credit-blue) ![Status](https://img.shields.io/badge/Status-Live%20MVP-brightgreen) ![Network](https://img.shields.io/badge/Network-Stellar%20Testnet-green) ![CI/CD](https://img.shields.io/badge/CI%2FCD-passing-brightgreen)
 
-##🔗 Quick Links
+---
+
+## 🔗 Quick Links
 
 | Resource | Link | 
 |----|-----|
 | **Live Demo** | [Live Link](https://investx-iota.vercel.app/) | 
 | **Smart Contract** | [View on StellarExpert](https://stellar.expert/explorer/testnet/contract/CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH) |
 | **Users Data & Review** | [Users Excel Sheet](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?usp=sharing) |
+
+---
 
 **Level 5 Building Submission Checklist**
 | Requirement | Status | Proof |
@@ -22,17 +26,23 @@
 | **Mobile Responsive** | ✅Done | See screenchot view below |
 | **Registered Users** | ✅Done | [35+ verified users Excel Sheet Data](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?usp=sharing) |
 
-##❗ Problem Statement
+---
+
+## ❗ Problem Statement
 
 India has over 15 million small businesses that struggle to access traditional bank financing. Banks typically reject 70%+ of small business loan applications due to strict collateral requirements and lack of formal credit history. Simultaneously, everyday citizens and local patrons have no secure, accessible, and transparent way to invest in the local businesses they already trust, leaving a massive financing and wealth-generation gap.
 
-##💡 Our Solution
+---
+
+## 💡 Our Solution
 
 InvestX bridges this gap by enabling **fractional investment** in vetted local businesses through blockchain-powered tokenization and decentralized decision-making:
 - **Micro-Investments:** Investors can buy fractional shares in businesses starting at tiny amounts using Stellar-based tokenization.
 - **AI-Powered Fairness:** We use Google Gemini AI to analyze raw business financials and generate unbiased risk assessments.
 - **Fully Decentralized:** No central admin holds power. All business approvals and monthly dividend payouts are verified and executed by the community through a DAO Governance Smart Contract.
 - **Trustless Escrow:** Investor funds are locked on-chain. If funding fails, funds are mathematically guaranteed to be refunded via Soroban contracts.
+
+---
 
 ##🏗 Project Structure
 ```text
@@ -48,6 +58,8 @@ InvestX/
 ├── docs/                   # Supplemental documentation
 └── start-local.ps1         # Convenience script for local startup
 ```
+
+---
 
 ## System Architecture
 
@@ -69,14 +81,20 @@ graph TD
         Network --> Tok(Business Token)
     end
 ```
+
+---
+
 ## Mobile Responsive View
 <p align="center">
   <img src="https://github.com/user-attachments/assets/374cb3fe-e88c-49b8-b2a8-9ca7e1e7d674" width="250"/>
 </p>
 
+---
 
 ## CI/CD Pipeline
 <img width="2880" height="1800" alt="Screenshot from 2026-04-11 00-32-39" src="https://github.com/user-attachments/assets/7fea726b-a9e8-449d-b2dd-0a3f972a489a" />
+
+---
 
 ## Technical Stack
 
@@ -90,12 +108,16 @@ graph TD
 | **Wallets** | Freighter API (v6+) | Transaction signing |
 | **AI Engine** | Google Gemini | Automated risk assessment & credit scoring |
 
+---
+
 ## Advanced Features
 
 - **Fully Decentralized Governance (DAO):** Zero admin intervention. All business approvals and revenue verification actions are executed via community voting on the Governance Smart Contract.
 - **Fractional Tokenization:** Businesses are minted as SEP-41 compliant tokens. Investors can make micro-investments tracking fractional ownership.
 - **On-Chain Escrow:** Investor funds are locked in a trustless Soroban escrow. If a business fails its funding goal, funds are mathematically guaranteed to be refunded.
 - **Automated Dividend Routing:** Businesses submit XLM profits to the Dividend contract, which auto-routes payouts directly to token holders proportional to their shares based on real-time on-chain balances.
+
+---
 
 ## Deployed Contracts
 
@@ -110,6 +132,8 @@ graph TD
 | **DAO Governance** | CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH |
 | **Sample Transaction Hash** | [View on stellar Expert](https://stellar.expert/explorer/testnet/contract/CAZZHGGQCK4XYSWQOY7NPSU247XMWA4PNJWUA6NU47TPQFK4E6EGVYZZ) |
 
+---
+
 ## 📢 User Feed Implementation
 
 | User Name | User Email | User Wallet Address | Commit ID |
@@ -117,6 +141,9 @@ graph TD
 | Rupa Das | das@example.com | GDVGCNPYED7FFJ65MAGEP2V7B4HVLJ5HXQQNQE7KSXTDDBMX3LSP2EEB | bcfc71b |
 | Puja Barai | puja@gmail.com | GBEUK7NAW6JIXCAOH7OUJMUKVCE44E4U2EC6LGX2JOEK6LOGZPWX23TO | 9f2293e |
 | Priya Pal | priya@gmail.com | GCVCHO43YMPEHBDWOVKP5Y2XZWEUHCZNPIGJRZAFFFGWMNGO5UVUMCO3 | 36dd3c7 |
+
+---
+
 ## Complete User Flows
 
 ### 1. Business Owner Flow
@@ -137,6 +164,8 @@ graph TD
 1. **Review Proposals:** View active business applications and revenue verifications.
 2. **Analyze Data:** Read AI-generated risk reports and cryptographically verified document hashes.
 3. **Vote On-Chain:** Sign transactions via Freighter to cast Upvote / Downvote on Soroban.
+
+---
 
 # Documentation
 
