@@ -138,6 +138,27 @@ graph TD
 2. **Analyze Data:** Read AI-generated risk reports and cryptographically verified document hashes.
 3. **Vote On-Chain:** Sign transactions via Freighter to cast Upvote / Downvote on Soroban.
 
+# Documentation
+
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System architecture and design |
+| [TECHNICAL_DOCS.md](docs/TECHNICAL_DOCS.md) | API reference and developer guide |
+| [USER_GUIDE.md](docs/USER_GUIDE.md) | End-user documentation |
+| [SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md) | Security audit checklist |
+| [DATA_INDEXING.md](docs/DATA_INDEXING.md) | Data indexing approach |
+| [FEEDBACK.md](docs/FEEDBACK.md) | User feedback & community |
+
+## Security
+
+See [SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md) for the complete security audit.
+
+**Summary:**
+
+- Smart Contract Security: ✅ Pass (93/100)
+- Frontend Security: ✅ Pass (97/100)
+- Infrastructure Security: ✅ Pass (89/100)
+
 ## Local Setup
 
 ### Prerequisites
