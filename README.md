@@ -87,7 +87,7 @@ graph TD
 
 ## Mobile Responsive View
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/374cb3fe-e88c-49b8-b2a8-9ca7e1e7d674" width="250"/>
+  <img src="https://github.com/user-attachments/assets/374cb3fe-9bd18ddf-9309-41f0-b283-6ef9179b187c" width="250"/>
 </p>
 
 ---
