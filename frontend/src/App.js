@@ -55,7 +55,7 @@ function App() {
               <AuthProvider>
                 <WalletProvider>
                   <WalletAuthBridge />
-                  <div className="min-h-screen flex flex-col">
+                  <div className="min-h-screen flex flex-col bg-dark-900">
                     <Navbar />
                     <main className="flex-1">
                       <Routes>
@@ -96,7 +96,21 @@ function App() {
                     </main>
                     <Footer />
                   </div>
-                  <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover />
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    pauseOnHover
+                    theme="dark"
+                    toastStyle={{
+                      background: 'rgba(17,24,39,0.95)',
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      color: '#E5E7EB',
+                    }}
+                  />
                 </WalletProvider>
               </AuthProvider>
             </Router>

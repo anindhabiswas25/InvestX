@@ -1,46 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  getMyBusinesses,
-  submitRevenueReport,
-  getPublicConfig,
-} from "../../services/business.api";
+import { getMyBusinesses, submitRevenueReport, getPublicConfig } from "../../services/business.api";
 import { useWallet } from "../../hooks/useWallet";
 import ProgressBar from "../../components/common/ProgressBar";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { formatCurrency, formatXLM, getStellarExplorerUrl } from "../../utils/formatters";
 import {
-  formatCurrency,
-  formatXLM,
-  getStellarExplorerUrl,
-} from "../../utils/formatters";
-import {
-  TransactionBuilder,
-  BASE_FEE,
-  Networks,
-  Operation,
-  Horizon,
-  Asset,
-  Memo,
+  TransactionBuilder, BASE_FEE, Networks, Operation, Horizon, Asset, Memo,
 } from "@stellar/stellar-sdk";
 import { toast } from "react-toastify";
-import { FiPlus, FiSend, FiCheckCircle, FiExternalLink } from "react-icons/fi";
+import {
+  FiPlus, FiSend, FiCheckCircle, FiExternalLink, FiActivity,
+  FiDollarSign, FiUsers,
+} from "react-icons/fi";
 
 const HORIZON_URL = "https://horizon-testnet.stellar.org";
 
-const STATUS_STYLES = {
-  pending: "bg-yellow-100 text-yellow-700",
-  verifying: "bg-blue-100 text-blue-700",
-  vote_required: "bg-indigo-100 text-indigo-700",
-  voting: "bg-purple-100 text-purple-700",
-  under_review: "bg-blue-100 text-blue-700",
-  fundraising: "bg-green-100 text-green-700",
-  funded: "bg-purple-100 text-purple-700",
-  active: "bg-emerald-100 text-emerald-700",
-  rejected: "bg-red-100 text-red-700",
-  verification_failed: "bg-red-100 text-red-700",
+const STATUS_BADGE = {
+  pending: "badge badge-warning",
+  verifying: "badge badge-cyan",
+  vote_required: "badge badge-neon",
+  voting: "badge badge-neon",
+  under_review: "badge badge-cyan",
+  fundraising: "badge badge-teal",
+  funded: "badge badge-neon",
+  active: "badge badge-success",
+  rejected: "badge bg-red-500/15 text-red-400 border border-red-500/25",
+  verification_failed: "badge bg-red-500/15 text-red-400 border border-red-500/25",
 };
 
-// Descriptive messages for each status
 const STATUS_MESSAGES = {
   pending: "Your application is pending. Verification will begin shortly.",
   verifying: "Our oracle is verifying your business documents and credentials...",
@@ -58,32 +46,19 @@ const BusinessOwnerDashboard = () => {
   const { signAndSendTransaction, isConnected, walletAddress } = useWallet();
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [revenueForm, setRevenueForm] = useState({
-    businessId: null,
-    amount: "",
-    notes: "",
-  });
+  const [revenueForm, setRevenueForm] = useState({ businessId: null, amount: "", notes: "" });
   const [submitting, setSubmitting] = useState(false);
-  const [submitStep, setSubmitStep] = useState(1); // 1=enter amount, 2=paying, 3=done
+  const [submitStep, setSubmitStep] = useState(1);
   const [loadingMsg, setLoadingMsg] = useState("");
   const [lastTxHash, setLastTxHash] = useState("");
-  const [platformConfig, setPlatformConfig] = useState({
-    adminWalletAddress: "",
-    dividendDistributorAddress: "",
-    xlmInrRate: 40,
-  });
+  const [platformConfig, setPlatformConfig] = useState({ adminWalletAddress: "", dividendDistributorAddress: "", xlmInrRate: 40 });
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [bizRes, configRes] = await Promise.all([
-          getMyBusinesses(),
-          getPublicConfig(),
-        ]);
+        const [bizRes, configRes] = await Promise.all([getMyBusinesses(), getPublicConfig()]);
         setBusinesses(bizRes.data.data?.businesses || []);
-        if (configRes.data.data) {
-          setPlatformConfig(configRes.data.data);
-        }
+        if (configRes.data.data) setPlatformConfig(configRes.data.data);
       } catch {}
       setLoading(false);
     };
@@ -95,349 +70,206 @@ const BusinessOwnerDashboard = () => {
     if (revenueAmount <= 0) return null;
     const sharePercent = biz.revenueSharePercentage || 20;
     const dividendPoolINR = revenueAmount * (sharePercent / 100);
-    const dividendPoolXLM =
-      dividendPoolINR /
-      (platformConfig.xlmInrRate || 40);
-    return {
-      dividendPoolINR,
-      dividendPoolXLM: parseFloat(dividendPoolXLM.toFixed(6)),
-      sharePercent,
-    };
+    const dividendPoolXLM = dividendPoolINR / (platformConfig.xlmInrRate || 40);
+    return { dividendPoolINR, dividendPoolXLM: parseFloat(dividendPoolXLM.toFixed(6)), sharePercent };
   };
 
   const handleRevenueSubmit = async (biz) => {
-    if (!revenueForm.amount || Number(revenueForm.amount) <= 0) {
-      toast.error("Enter a valid revenue amount");
-      return;
-    }
-    if (!isConnected || !walletAddress) {
-      toast.error("Please connect your Freighter wallet first");
-      return;
-    }
-
+    if (!revenueForm.amount || Number(revenueForm.amount) <= 0) { toast.error("Enter a valid revenue amount"); return; }
+    if (!isConnected || !walletAddress) { toast.error("Please connect your Freighter wallet first"); return; }
     const calc = getDividendCalc(biz);
     if (!calc) return;
-
     const destinationAddress = platformConfig.adminWalletAddress;
-    if (!destinationAddress) {
-      toast.error("Platform destination address not configured");
-      return;
-    }
+    if (!destinationAddress) { toast.error("Platform destination address not configured"); return; }
 
     setSubmitting(true);
     setSubmitStep(2);
     try {
       const xlmAmountStr = Number(calc.dividendPoolXLM).toFixed(7);
-
-      // Step 1: Load business owner's real Horizon account (for sequence number)
       setLoadingMsg("Loading your Stellar account...");
       const horizonServer = new Horizon.Server(HORIZON_URL);
       let ownerAccount;
       try {
         ownerAccount = await horizonServer.loadAccount(walletAddress);
       } catch {
-        throw new Error(
-          `Your Stellar account was not found on Testnet. ` +
-            "Please fund it at: https://friendbot.stellar.org",
-        );
+        throw new Error("Your Stellar account was not found on Testnet. Please fund it at: https://friendbot.stellar.org");
       }
-
-      // Step 2: Build the XLM payment transaction
       setLoadingMsg(`Building transaction for ${xlmAmountStr} XLM...`);
-      const txBuilder = new TransactionBuilder(ownerAccount, {
-        fee: BASE_FEE,
-        networkPassphrase: Networks.TESTNET,
-      })
-        .addOperation(
-          Operation.payment({
-            destination: destinationAddress,
-            asset: Asset.native(),
-            amount: xlmAmountStr,
-          }),
-        )
-        .addMemo(Memo.text("InvestX dividend"))
-        .setTimeout(30);
+      const txXDR = new TransactionBuilder(ownerAccount, { fee: BASE_FEE, networkPassphrase: Networks.TESTNET })
+        .addOperation(Operation.payment({ destination: destinationAddress, asset: Asset.native(), amount: xlmAmountStr }))
+        .addMemo(Memo.text("InvestX dividend")).setTimeout(30).build().toXDR();
 
-      const txXDR = txBuilder.build().toXDR();
-
-      // Step 3: Sign & submit via Freighter → Horizon
       setLoadingMsg("Requesting Freighter signature...");
       const txRes = await signAndSendTransaction(txXDR);
-
       setLoadingMsg("Transaction confirmed! Submitting revenue report...");
       setLastTxHash(txRes.txHash);
-
-      // Step 4: Record revenue report on backend
-      await submitRevenueReport(biz._id, {
-        revenueAmount: Number(revenueForm.amount),
-        txHash: txRes.txHash,
-      });
-
+      await submitRevenueReport(biz._id, { revenueAmount: Number(revenueForm.amount), txHash: txRes.txHash });
       setSubmitStep(3);
       toast.success("Revenue report submitted with dividend payment!");
     } catch (err) {
-      console.error("Revenue submission error:", err);
-      toast.error(
-        err?.response?.data?.message || err.message || "Transaction failed",
-      );
+      toast.error(err?.response?.data?.message || err.message || "Transaction failed");
       setSubmitStep(1);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const resetForm = () => {
-    setRevenueForm({ businessId: null, amount: "", notes: "" });
-    setSubmitStep(1);
-    setLastTxHash("");
-    setLoadingMsg("");
-  };
+  const resetForm = () => { setRevenueForm({ businessId: null, amount: "", notes: "" }); setSubmitStep(1); setLastTxHash(""); setLoadingMsg(""); };
 
   if (loading) return <LoadingSpinner message="Loading your businesses..." />;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">My Businesses</h1>
-          <Link
-            to="/apply-funding"
-            className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 flex items-center"
-          >
-            <FiPlus className="mr-1" /> Apply for Funding
+    <div className="min-h-screen bg-dark-900 pt-20 pb-12 px-4">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="glow-orb w-96 h-96 bg-primary-600 absolute -top-48 -left-24 opacity-10" />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-black text-white">My Businesses</h1>
+            <p className="text-gray-400 mt-1">Manage your funded businesses</p>
+          </div>
+          <Link to="/apply-funding" className="btn-primary text-sm">
+            <FiPlus className="mr-2" /> Apply for Funding
           </Link>
         </div>
 
         {businesses.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {businesses.map((biz) => {
-              const calc =
-                revenueForm.businessId === biz._id
-                  ? getDividendCalc(biz)
-                  : null;
+              const calc = revenueForm.businessId === biz._id ? getDividendCalc(biz) : null;
               return (
-                <div key={biz._id} className="bg-white rounded-xl border p-6">
+                <div key={biz._id} className="glass rounded-2xl p-6">
+                  {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {biz.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {biz.category} | {biz.location?.city},{" "}
-                        {biz.location?.state}
-                      </p>
+                      <h3 className="text-xl font-bold text-white">{biz.name}</h3>
+                      <p className="text-sm text-gray-400 mt-1">{biz.category} · {biz.location?.city}, {biz.location?.state}</p>
                     </div>
-                    <span
-                                      className={`text-xs px-3 py-1 rounded-full font-medium ${
-                                        STATUS_STYLES[biz.status] || "bg-gray-100 text-gray-700"
-                                      }`}
-                                    >
-                                      {biz.status?.replace(/_/g, " ")}
-                                    </span>
-                                  </div>
+                    <span className={STATUS_BADGE[biz.status] || "badge badge-neon"}>{biz.status?.replace(/_/g, " ")}</span>
+                  </div>
 
-                                  {/* Status message for verification stages */}
-                                  {STATUS_MESSAGES[biz.status] && (
-                                    <div className={`text-sm p-3 rounded-lg mb-4 ${
-                                      biz.status === 'verifying' ? 'bg-blue-50 text-blue-700' :
-                                      biz.status === 'vote_required' ? 'bg-indigo-50 text-indigo-700' :
-                                      biz.status === 'voting' ? 'bg-purple-50 text-purple-700' :
-                                      biz.status === 'verification_failed' ? 'bg-red-50 text-red-700' :
-                                      biz.status === 'rejected' ? 'bg-red-50 text-red-700' :
-                                      'bg-gray-50 text-gray-600'
-                                    }`}>
-                                      {biz.status === 'verifying' && (
-                                        <span className="inline-block w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2 align-middle"></span>
-                                      )}
-                                      {biz.status === 'vote_required' && (
-                                        <span className="inline-block w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mr-2 align-middle"></span>
-                                      )}
-                                      {STATUS_MESSAGES[biz.status]}
-                                      {biz.status === 'voting' && biz.proposalId && (
-                                        <Link 
-                                          to="/governance" 
-                                          className="ml-2 text-purple-600 underline hover:text-purple-800"
-                                        >
-                                          View Vote (Proposal #{biz.proposalId})
-                                        </Link>
-                                      )}
-                                    </div>
-                                  )}
+                  {/* Status Message */}
+                  {STATUS_MESSAGES[biz.status] && (
+                    <div className={`text-sm p-3 rounded-xl mb-4 flex items-center gap-2 ${
+                      ["verifying","vote_required"].includes(biz.status) ? "bg-primary-500/10 border border-primary-500/20 text-primary-300" :
+                      ["rejected","verification_failed"].includes(biz.status) ? "bg-red-500/10 border border-red-500/20 text-red-300" :
+                      "bg-white/[0.04] border border-white/[0.08] text-gray-300"
+                    }`}>
+                      {["verifying","vote_required"].includes(biz.status) && (
+                        <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                      )}
+                      <span>{STATUS_MESSAGES[biz.status]}</span>
+                      {biz.status === "voting" && biz.proposalId && (
+                        <Link to="/governance" className="ml-2 text-primary-400 hover:text-primary-300 underline text-xs">
+                          View Vote
+                        </Link>
+                      )}
+                    </div>
+                  )}
 
+                  {/* Fundraising Progress */}
                   {biz.status === "fundraising" && (
                     <div className="mb-4">
-                      <ProgressBar
-                        raised={biz.raisedAmount}
-                        goal={biz.fundingGoal}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        {biz.investorCount || 0} investors
-                      </p>
+                      <ProgressBar raised={biz.raisedAmount} goal={biz.fundingGoal} />
+                      <p className="text-xs text-gray-500 mt-1">{biz.investorCount || 0} investors</p>
                     </div>
                   )}
 
+                  {/* Active Stats */}
                   {(biz.status === "active" || biz.status === "funded") && (
-                    <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="text-xs text-gray-500">Investors</div>
-                        <div className="font-semibold">
-                          {biz.investorCount || 0}
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      {[
+                        { icon: FiUsers, label: "Investors", value: biz.investorCount || 0 },
+                        { icon: FiDollarSign, label: "Raised", value: formatCurrency(biz.raisedAmount) },
+                        { icon: FiActivity, label: "Goal", value: formatCurrency(biz.fundingGoal) },
+                      ].map((s, i) => (
+                        <div key={i} className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
+                            <s.icon className="text-primary-400" /> {s.label}
+                          </div>
+                          <div className="font-bold text-white">{s.value}</div>
                         </div>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="text-xs text-gray-500">Raised</div>
-                        <div className="font-semibold">
-                          {formatCurrency(biz.raisedAmount)}
-                        </div>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="text-xs text-gray-500">Goal</div>
-                        <div className="font-semibold">
-                          {formatCurrency(biz.fundingGoal)}
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   )}
 
+                  {/* Revenue Report Section */}
                   {(biz.status === "active" || biz.status === "funded") && (
-                    <div className="border-t pt-4 mt-4">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                        Submit Monthly Revenue Report &amp; Pay Dividends
-                      </h4>
+                    <div className="border-t border-white/10 pt-5 mt-4">
+                      <h4 className="text-sm font-bold text-white mb-3">Submit Monthly Revenue & Pay Dividends</h4>
                       {revenueForm.businessId === biz._id ? (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           {submitStep === 1 && (
                             <>
                               <input
                                 type="number"
                                 value={revenueForm.amount}
-                                onChange={(e) =>
-                                  setRevenueForm((p) => ({
-                                    ...p,
-                                    amount: e.target.value,
-                                  }))
-                                }
-                                className="w-full border rounded-lg px-3 py-2 text-sm"
+                                onChange={(e) => setRevenueForm((p) => ({ ...p, amount: e.target.value }))}
+                                className="input-dark"
                                 placeholder="Revenue amount (INR)"
                               />
                               {calc && (
-                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm space-y-1">
+                                <div className="p-4 rounded-xl bg-primary-500/10 border border-primary-500/20 text-sm space-y-2">
                                   <div className="flex justify-between">
-                                    <span className="text-blue-700">
-                                      Revenue Share ({calc.sharePercent}%)
-                                    </span>
-                                    <span className="font-semibold text-blue-800">
-                                      {formatCurrency(calc.dividendPoolINR)}
-                                    </span>
+                                    <span className="text-gray-300">Revenue Share ({calc.sharePercent}%)</span>
+                                    <span className="font-bold text-white">{formatCurrency(calc.dividendPoolINR)}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className="text-blue-700">
-                                      XLM to Pay
-                                    </span>
-                                    <span className="font-semibold text-blue-800">
-                                      {formatXLM(calc.dividendPoolXLM)}
-                                    </span>
+                                    <span className="text-gray-300">XLM to Pay</span>
+                                    <span className="font-bold text-primary-300">{formatXLM(calc.dividendPoolXLM)}</span>
                                   </div>
-                                  <p className="text-xs text-blue-600 mt-1">
-                                    This XLM will be sent from your Freighter
-                                    wallet to the platform. Admin will then
-                                    distribute it to investors.
-                                  </p>
+                                  <p className="text-xs text-gray-500 mt-1">This XLM will be sent from your Freighter wallet to the platform for investor distribution.</p>
                                 </div>
                               )}
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleRevenueSubmit(biz)}
-                                  disabled={submitting || !revenueForm.amount}
-                                  className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 flex items-center"
-                                >
-                                  <FiSend className="mr-1" /> Pay &amp; Submit
-                                  Report
+                              <div className="flex gap-3">
+                                <button onClick={() => handleRevenueSubmit(biz)} disabled={submitting || !revenueForm.amount} className="btn-primary text-sm disabled:opacity-50">
+                                  <FiSend className="mr-1.5" /> Pay & Submit Report
                                 </button>
-                                <button
-                                  onClick={resetForm}
-                                  className="border px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
-                                >
-                                  Cancel
-                                </button>
+                                <button onClick={resetForm} className="btn-secondary text-sm">Cancel</button>
                               </div>
                             </>
                           )}
 
                           {submitStep === 2 && (
-                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-                              <div className="animate-spin w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-3"></div>
-                              <p className="text-sm text-yellow-800 font-medium">
-                                {loadingMsg}
-                              </p>
-                              <p className="text-xs text-yellow-600 mt-1">
-                                Please do not close this page.
-                              </p>
+                            <div className="p-5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-center">
+                              <div className="animate-spin w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-3" />
+                              <p className="text-sm text-amber-200 font-medium">{loadingMsg}</p>
+                              <p className="text-xs text-amber-400/70 mt-1">Please do not close this page.</p>
                             </div>
                           )}
 
                           {submitStep === 3 && (
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center space-y-3">
-                              <FiCheckCircle className="mx-auto text-green-500 text-4xl" />
-                              <p className="text-sm text-green-800 font-semibold">
-                                Revenue report submitted with dividend payment!
+                            <div className="p-5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-center space-y-3">
+                              <FiCheckCircle className="mx-auto text-teal-400 text-4xl" />
+                              <p className="text-sm text-teal-200 font-bold">Revenue report submitted with dividend payment!</p>
+                              <p className="text-sm text-teal-300">
+                                Dividend: {formatCurrency(calc?.dividendPoolINR || 0)} ({formatXLM(calc?.dividendPoolXLM || 0)})
                               </p>
-                              <div className="text-sm space-y-1">
-                                <p className="text-green-700">
-                                  Dividend:{" "}
-                                  {formatCurrency(calc?.dividendPoolINR || 0)} (
-                                  {formatXLM(calc?.dividendPoolXLM || 0)})
-                                </p>
-                                {lastTxHash && (
-                                  <a
-                                    href={getStellarExplorerUrl(
-                                      "tx",
-                                      lastTxHash,
-                                    )}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-primary-600 hover:underline inline-flex items-center text-xs"
-                                  >
-                                    View Transaction{" "}
-                                    <FiExternalLink className="ml-1" />
-                                  </a>
-                                )}
-                              </div>
-                              <p className="text-xs text-green-600">
-                                Admin will verify and distribute to investors.
-                              </p>
-                              <button
-                                onClick={resetForm}
-                                className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700"
-                              >
-                                Done
-                              </button>
+                              {lastTxHash && (
+                                <a href={getStellarExplorerUrl("tx", lastTxHash)} target="_blank" rel="noopener noreferrer"
+                                  className="text-primary-400 hover:text-primary-300 inline-flex items-center text-xs">
+                                  View Transaction <FiExternalLink className="ml-1" />
+                                </a>
+                              )}
+                              <p className="text-xs text-gray-500">Admin will verify and distribute to investors.</p>
+                              <button onClick={resetForm} className="btn-primary text-sm">Done</button>
                             </div>
                           )}
                         </div>
                       ) : (
                         <button
-                          onClick={() => {
-                            setRevenueForm({
-                              businessId: biz._id,
-                              amount: "",
-                              notes: "",
-                            });
-                            setSubmitStep(1);
-                          }}
-                          className="text-sm text-primary-600 font-medium hover:underline"
-                        >
+                          onClick={() => { setRevenueForm({ businessId: biz._id, amount: "", notes: "" }); setSubmitStep(1); }}
+                          className="text-sm text-primary-400 hover:text-primary-300 font-medium">
                           Submit Revenue Report →
                         </button>
                       )}
                     </div>
                   )}
 
-                  <div className="mt-4">
-                    <Link
-                      to={`/businesses/${biz._id}`}
-                      className="text-sm text-primary-600 hover:underline"
-                    >
+                  <div className="mt-4 pt-4 border-t border-white/[0.06]">
+                    <Link to={`/businesses/${biz._id}`} className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
                       View Public Page →
                     </Link>
                   </div>
@@ -446,16 +278,9 @@ const BusinessOwnerDashboard = () => {
             })}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <p className="text-gray-500 mb-4">
-              You haven't listed any businesses yet.
-            </p>
-            <Link
-              to="/apply-funding"
-              className="bg-primary-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary-700"
-            >
-              Apply for Funding
-            </Link>
+          <div className="glass rounded-2xl text-center py-20">
+            <p className="text-gray-400 mb-6">You haven't listed any businesses yet.</p>
+            <Link to="/apply-funding" className="btn-primary">Apply for Funding</Link>
           </div>
         )}
       </div>
