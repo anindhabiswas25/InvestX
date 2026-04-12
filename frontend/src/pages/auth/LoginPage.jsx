@@ -5,7 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-toastify';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiMail, FiLock, FiZap } from 'react-icons/fi';
+import BackgroundOrbs from '../../components/ui/BackgroundOrbs';
 
 const schema = yup.object({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -44,40 +45,99 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border p-8">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">Business Owner Login</h2>
-        <p className="text-center text-sm text-gray-500 mb-6">
-          This login is for fund raisers / business owners only.<br />
-          <Link to="/" className="text-primary-600 hover:underline">Investors — just connect your wallet</Link>
-        </p>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" {...register('email')} className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="you@example.com" />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+    <div className="min-h-screen bg-dark-900 flex items-center justify-center py-12 px-4 relative overflow-hidden pt-24">
+      <BackgroundOrbs variant="subtle" />
+      <div className="relative z-10 w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div
+            className="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, #7C4DFF, #00C6FF)', boxShadow: '0 0 24px rgba(124,77,255,0.5)' }}
+          >
+            <span className="text-white font-bold">IX</span>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <div className="relative">
-              <input type={showPw ? 'text' : 'password'} {...register('password')} className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 pr-10" />
-              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-2.5 text-gray-400">
-                {showPw ? <FiEyeOff /> : <FiEye />}
-              </button>
+          <h2 className="text-2xl font-bold text-white mb-1">Business Owner Login</h2>
+          <p className="text-sm text-gray-500">
+            This login is for fund raisers only.{' '}
+            <Link to="/" className="text-primary-400 hover:text-primary-300 transition-colors">
+              Investors — just connect your wallet
+            </Link>
+          </p>
+        </div>
+
+        {/* Card */}
+        <div className="glass-strong rounded-3xl p-8 border border-white/10">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Email</label>
+              <div className="relative">
+                <FiMail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input
+                  type="email"
+                  {...register('email')}
+                  className="input-dark pl-10"
+                  placeholder="you@example.com"
+                />
+              </div>
+              {errors.email && <p className="text-red-400 text-xs mt-1.5">{errors.email.message}</p>}
             </div>
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
+              <div className="relative">
+                <FiLock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  {...register('password')}
+                  className="input-dark pl-10 pr-10"
+                  placeholder="Your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(!showPw)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                >
+                  {showPw ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+                </button>
+              </div>
+              {errors.password && <p className="text-red-400 text-xs mt-1.5">{errors.password.message}</p>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full py-3 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center space-x-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Signing In...</span>
+                </span>
+              ) : (
+                <span className="flex items-center justify-center space-x-2">
+                  <FiZap size={15} />
+                  <span>Sign In</span>
+                </span>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 pt-5 border-t border-white/8 text-center">
+            <p className="text-sm text-gray-500">
+              Need a business account?{' '}
+              <Link to="/raise-funds" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+                Raise Funds
+              </Link>
+            </p>
           </div>
-          <button type="submit" disabled={loading}
-            className="w-full bg-primary-600 text-white py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50">
-            {loading ? 'Signing In...' : 'Sign In'}
-          </button>
-        </form>
-        <p className="text-center text-sm text-gray-500 mt-4">
-          Need a business account? <Link to="/raise-funds" className="text-primary-600 hover:underline">Raise Funds</Link>
-        </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default LoginPage;
+
+

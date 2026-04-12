@@ -1,16 +1,17 @@
 import React from 'react';
 
-const colors = {
-  LOW: 'bg-green-100 text-green-800',
-  MEDIUM: 'bg-yellow-100 text-yellow-800',
-  HIGH: 'bg-red-100 text-red-800',
+const RISK_CONFIG = {
+  LOW:    { cls: 'badge-success', dot: '#34d399' },
+  MEDIUM: { cls: 'badge-warning', dot: '#fbbf24' },
+  HIGH:   { cls: 'bg-red-500/15 text-red-400 border border-red-500/25', dot: '#f87171' },
 };
 
 const RiskBadge = ({ rating }) => {
-  const cls = colors[rating] || 'bg-gray-100 text-gray-800';
+  const cfg = RISK_CONFIG[rating] || { cls: 'badge-neon', dot: '#9ca3af' };
   return (
-    <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-full ${cls}`}>
-      {rating || 'N/A'}
+    <span className={`badge ${cfg.cls} flex items-center space-x-1`}>
+      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: cfg.dot }} />
+      <span>{rating || 'N/A'}</span>
     </span>
   );
 };

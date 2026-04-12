@@ -18,6 +18,15 @@ const CATEGORIES = [
 ];
 const DURATION_OPTIONS = [6, 12, 24, 36, 60];
 
+const STEP_LABELS = ["Basic Info", "Location", "Financials", "Funding Terms", "Media & Review"];
+
+const FIELD_MAP = {
+  businessName: 'name',
+  tokenPriceINR: 'tokenPrice',
+  revenueShareDuration: 'revenueSharingDuration',
+  yearEstablished: 'yearsInOperation',
+};
+
 const ApplyFundingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -34,28 +43,17 @@ const ApplyFundingPage = () => {
   const revShare = watch('revenueSharePercentage');
   const totalTokens = fundingGoal ? Math.floor(Number(fundingGoal) / Number(tokenPrice)) : 0;
 
-  // Map frontend form fields to backend expected field names
-  const FIELD_MAP = {
-    businessName: 'name',
-    tokenPriceINR: 'tokenPrice',
-    revenueShareDuration: 'revenueSharingDuration',
-    yearEstablished: 'yearsInOperation',
-  };
-
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       const formData = new FormData();
       Object.entries(data).forEach(([k, v]) => {
-        if (v) {
-          const mappedKey = FIELD_MAP[k] || k;
-          formData.append(mappedKey, v);
-        }
+        if (v) { const mappedKey = FIELD_MAP[k] || k; formData.append(mappedKey, v); }
       });
       photos.forEach((f) => formData.append('photos', f));
       documents.forEach((f) => formData.append('documents', f));
       await submitBusinessApplication(formData);
-      toast.success('Application submitted! Admin will review it shortly.');
+      toast.success('Application submitted! Community will review it shortly.');
       navigate('/dashboard/business');
     } catch (err) {
       toast.error(err.message);
@@ -66,52 +64,60 @@ const ApplyFundingPage = () => {
 
   const nextStep = () => setStep((p) => Math.min(p + 1, 5));
   const prevStep = () => setStep((p) => Math.max(p - 1, 1));
-
-  const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500";
+  const inpCls = "input-dark";
+  const labelCls = "block text-sm font-medium text-gray-300 mb-1.5";
+  const errCls = "text-red-400 text-xs mt-1";
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Apply for Funding</h1>
-        <p className="text-gray-500 text-sm mb-6">Step {step} of 5</p>
+    <div className="min-h-screen bg-dark-900 pt-20 pb-12 px-4">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="glow-orb w-96 h-96 bg-primary-600 absolute -top-48 -left-24 opacity-10" />
+        <div className="glow-orb w-80 h-80 bg-cyan-500 absolute bottom-0 right-0 opacity-8" />
+      </div>
 
-        {/* Progress */}
-        <div className="flex gap-1 mb-8">
+      <div className="max-w-2xl mx-auto relative z-10">
+        <div className="mb-8">
+          <h1 className="text-3xl font-black text-white">Apply for Funding</h1>
+          <p className="text-gray-400 mt-2">Step {step} of 5 — {STEP_LABELS[step - 1]}</p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="flex gap-1.5 mb-8">
           {[1, 2, 3, 4, 5].map((s) => (
-            <div key={s} className={`flex-1 h-1.5 rounded ${step >= s ? 'bg-primary-500' : 'bg-gray-200'}`}></div>
+            <div key={s} className={`flex-1 h-1.5 rounded-full transition-all ${step >= s ? 'bg-gradient-to-r from-primary-500 to-cyan-500' : 'bg-white/10'}`} />
           ))}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="bg-white rounded-xl border p-6">
+          <div className="glass-strong rounded-2xl p-8">
             {/* Step 1: Basic Info */}
             {step === 1 && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold text-white mb-5">Basic Information</h2>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Name *</label>
-                  <input {...register('businessName', { required: 'Required' })} className={inputCls} />
-                  {errors.businessName && <p className="text-red-500 text-xs mt-1">{errors.businessName.message}</p>}
+                  <label className={labelCls}>Business Name *</label>
+                  <input {...register('businessName', { required: 'Required' })} className={inpCls} placeholder="Your business name" />
+                  {errors.businessName && <p className={errCls}>{errors.businessName.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
-                  <select {...register('category', { required: 'Required' })} className={inputCls}>
-                    <option value="">Select...</option>
-                    {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  <label className={labelCls}>Category *</label>
+                  <select {...register('category', { required: 'Required' })} className={inpCls}>
+                    <option value="" style={{ background: "#1A2235" }}>Select category...</option>
+                    {CATEGORIES.map((c) => <option key={c.value} value={c.value} style={{ background: "#1A2235" }}>{c.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
-                  <textarea {...register('description', { required: 'Required' })} className={inputCls} rows={3} />
+                  <label className={labelCls}>Description *</label>
+                  <textarea {...register('description', { required: 'Required' })} className={inpCls} rows={3} placeholder="What does your business do?" style={{ resize: "vertical" }} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Year Established</label>
-                    <input type="number" {...register('yearEstablished')} className={inputCls} />
+                    <label className={labelCls}>Year Established</label>
+                    <input type="number" {...register('yearEstablished')} className={inpCls} placeholder="2018" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Employees</label>
-                    <input type="number" {...register('employeeCount')} className={inputCls} />
+                    <label className={labelCls}>Employees</label>
+                    <input type="number" {...register('employeeCount')} className={inpCls} placeholder="15" />
                   </div>
                 </div>
               </div>
@@ -119,112 +125,118 @@ const ApplyFundingPage = () => {
 
             {/* Step 2: Location */}
             {step === 2 && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Location & Contact</h2>
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold text-white mb-5">Location & Contact</h2>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                  <input {...register('address')} className={inputCls} />
+                  <label className={labelCls}>Address</label>
+                  <input {...register('address')} className={inpCls} placeholder="Street address" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
-                    <input {...register('city', { required: 'Required' })} className={inputCls} />
+                    <label className={labelCls}>City *</label>
+                    <input {...register('city', { required: 'Required' })} className={inpCls} placeholder="Mumbai" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">State *</label>
-                    <input {...register('state', { required: 'Required' })} className={inputCls} />
+                    <label className={labelCls}>State *</label>
+                    <input {...register('state', { required: 'Required' })} className={inpCls} placeholder="Maharashtra" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Pincode</label>
-                    <input {...register('pincode')} className={inputCls} />
+                    <label className={labelCls}>Pincode</label>
+                    <input {...register('pincode')} className={inpCls} placeholder="400001" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                    <input {...register('businessPhone')} className={inputCls} />
+                    <label className={labelCls}>Phone</label>
+                    <input {...register('businessPhone')} className={inpCls} placeholder="9876543210" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
-                  <input {...register('website')} className={inputCls} placeholder="https://..." />
+                  <label className={labelCls}>Website</label>
+                  <input {...register('website')} className={inpCls} placeholder="https://yourbusiness.com" />
                 </div>
               </div>
             )}
 
-            {/* Step 3: Financial */}
+            {/* Step 3: Financials */}
             {step === 3 && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Financial Details</h2>
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold text-white mb-5">Financial Details</h2>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Avg Monthly Revenue (INR)</label>
-                    <input type="number" {...register('averageMonthlyRevenue')} className={inputCls} />
+                    <label className={labelCls}>Avg Monthly Revenue (INR)</label>
+                    <input type="number" {...register('averageMonthlyRevenue')} className={inpCls} placeholder="150000" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Profit Margin (%)</label>
-                    <input type="number" {...register('profitMargin')} className={inputCls} />
+                    <label className={labelCls}>Profit Margin (%)</label>
+                    <input type="number" {...register('profitMargin')} className={inpCls} placeholder="25" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">GST Number</label>
-                  <input {...register('gstNumber')} className={inputCls} />
+                  <label className={labelCls}>GST Number</label>
+                  <input {...register('gstNumber')} className={inpCls} placeholder="22AAAAA0000A1Z5" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Documents (GST returns, bank statements)</label>
-                  <input type="file" accept=".pdf,.jpg,.png" multiple onChange={(e) => setDocuments(Array.from(e.target.files))} className={inputCls} />
+                  <label className={labelCls}>Documents (GST returns, bank statements)</label>
+                  <div className="border border-dashed border-white/15 rounded-xl p-4 bg-white/[0.02]">
+                    <input type="file" accept=".pdf,.jpg,.png" multiple onChange={(e) => setDocuments(Array.from(e.target.files))}
+                      className="text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-primary-500/20 file:text-primary-300 hover:file:bg-primary-500/30 cursor-pointer w-full" />
+                  </div>
                 </div>
               </div>
             )}
 
             {/* Step 4: Funding Terms */}
             {step === 4 && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Funding Terms</h2>
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold text-white mb-5">Funding Terms</h2>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Funding Goal (INR) *</label>
-                  <input type="number" {...register('fundingGoal', { required: 'Required' })} className={inputCls} />
+                  <label className={labelCls}>Funding Goal (INR) *</label>
+                  <input type="number" {...register('fundingGoal', { required: 'Required' })} className={inpCls} placeholder="500000" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Revenue Share (%): {revShare}%</label>
-                  <input type="range" min="5" max="30" {...register('revenueSharePercentage')} className="w-full" />
+                  <label className={labelCls}>Revenue Share: <span className="text-primary-400">{revShare}%</span></label>
+                  <input type="range" min="5" max="30" {...register('revenueSharePercentage')} className="w-full accent-primary-500 h-1.5 bg-white/10 rounded-full" />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1"><span>5%</span><span>30%</span></div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Token Price (INR)</label>
-                  <input type="number" {...register('tokenPriceINR')} className={inputCls} />
+                  <label className={labelCls}>Token Price (INR)</label>
+                  <input type="number" {...register('tokenPriceINR')} className={inpCls} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration (months)</label>
-                  <select {...register('revenueShareDuration')} className={inputCls}>
-                    {DURATION_OPTIONS.map((d) => <option key={d} value={d}>{d} months</option>)}
+                  <label className={labelCls}>Revenue Share Duration (months)</label>
+                  <select {...register('revenueShareDuration')} className={inpCls}>
+                    {DURATION_OPTIONS.map((d) => <option key={d} value={d} style={{ background: "#1A2235" }}>{d} months</option>)}
                   </select>
                 </div>
                 {fundingGoal && (
-                  <div className="bg-gray-50 rounded-lg p-4 text-sm">
-                    <p>You will issue <strong>{totalTokens} tokens</strong> at ₹{tokenPrice} each.</p>
-                    <p>Investors will earn <strong>{revShare}%</strong> of your revenue share per token.</p>
+                  <div className="p-4 rounded-xl bg-primary-500/10 border border-primary-500/20 text-sm text-gray-300">
+                    You will issue <strong className="text-white">{totalTokens} tokens</strong> at ₹{tokenPrice} each.
+                    Investors will earn <strong className="text-primary-400">{revShare}%</strong> of monthly revenue.
                   </div>
                 )}
               </div>
             )}
 
-            {/* Step 5: Media & Review */}
+            {/* Step 5: Media */}
             {step === 5 && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold mb-4">Business Media & Review</h2>
+              <div className="space-y-5">
+                <h2 className="text-lg font-bold text-white mb-5">Business Media & Review</h2>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Photos (up to 5)</label>
-                  <div className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer hover:border-primary-400">
+                  <label className={labelCls}>Business Photos (up to 5)</label>
+                  <div className="border-2 border-dashed border-white/15 rounded-xl p-8 text-center bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
                     <input type="file" accept="image/*" multiple onChange={(e) => setPhotos(Array.from(e.target.files).slice(0, 5))} className="hidden" id="photos" />
                     <label htmlFor="photos" className="cursor-pointer">
-                      <FiUpload className="mx-auto text-2xl text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-500">Click to upload photos</p>
+                      <FiUpload className="mx-auto text-3xl text-gray-500 mb-3" />
+                      <p className="text-sm text-gray-400">Click to upload photos</p>
+                      <p className="text-xs text-gray-600 mt-1">Maximum 5 images</p>
                     </label>
+                    {photos.length > 0 && <p className="text-xs text-primary-400 mt-2">{photos.length} file(s) selected</p>}
                   </div>
-                  {photos.length > 0 && <p className="text-xs text-gray-500 mt-1">{photos.length} file(s) selected</p>}
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
-                  <p className="font-medium text-gray-700 mb-2">Review your details before submitting. Once submitted, your application will be reviewed by the admin with AI-assisted scoring.</p>
+                <div className="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-gray-300">
+                  <p className="font-medium text-white mb-1">Ready to Submit?</p>
+                  <p>Your application will be reviewed by community governance with AI-assisted scoring. Once approved, you can start receiving investments.</p>
                 </div>
               </div>
             )}
@@ -232,14 +244,14 @@ const ApplyFundingPage = () => {
 
           {/* Navigation */}
           <div className="flex justify-between mt-6">
-            {step > 1 && (
-              <button type="button" onClick={prevStep} className="border px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50">Back</button>
-            )}
+            {step > 1 ? (
+              <button type="button" onClick={prevStep} className="btn-secondary text-sm">Back</button>
+            ) : <div />}
             <div className="ml-auto">
               {step < 5 ? (
-                <button type="button" onClick={nextStep} className="bg-primary-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700">Next</button>
+                <button type="button" onClick={nextStep} className="btn-primary text-sm">Next Step</button>
               ) : (
-                <button type="submit" disabled={loading} className="bg-primary-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50">
+                <button type="submit" disabled={loading} className="btn-primary text-sm disabled:opacity-50">
                   {loading ? 'Submitting...' : 'Submit Application'}
                 </button>
               )}
@@ -252,3 +264,4 @@ const ApplyFundingPage = () => {
 };
 
 export default ApplyFundingPage;
+

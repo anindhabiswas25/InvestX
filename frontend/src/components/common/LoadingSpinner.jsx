@@ -1,9 +1,18 @@
 import React from 'react';
 
 const LoadingSpinner = ({ message = 'Loading...' }) => (
-  <div className="flex flex-col items-center justify-center py-20">
-    <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
-    <p className="mt-4 text-gray-500 text-sm">{message}</p>
+  <div className="flex flex-col items-center justify-center py-20 space-y-4">
+    <div className="relative w-12 h-12">
+      <div
+        className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
+        style={{ borderTopColor: '#7C4DFF', borderRightColor: '#00C6FF' }}
+      />
+      <div
+        className="absolute inset-2 rounded-full border-2 border-transparent animate-spin"
+        style={{ borderTopColor: '#00F5D4', animationDirection: 'reverse', animationDuration: '0.8s' }}
+      />
+    </div>
+    <p className="text-sm text-gray-500">{message}</p>
   </div>
 );
 
