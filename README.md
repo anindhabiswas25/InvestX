@@ -17,7 +17,8 @@
 
 ---
 
-**Level 5 Building Submission Checklist**
+## Level 5 Building Submission Checklist
+
 | Requirement | Status | Proof |
 |------|------|------|
 | **Live Demo Deployed** | ✅Done |  [Live Link](https://investx-iota.vercel.app/) | 
@@ -44,7 +45,7 @@ InvestX bridges this gap by enabling **fractional investment** in vetted local b
 
 ---
 
-##🏗 Project Structure
+## 🏗 Project Structure
 ```text
 InvestX/
 ├── backend/                # Node.js/Express API, AI coordination
