@@ -1,5 +1,5 @@
 ﻿# InvestX - Fully Decentralized Investment Platform
-<img width="2834" height="1636" alt="InvestX" src="https://github.com/user-attachments/assets/03fb2c92-ec81-4295-9871-0a0240e8beb4" />
+<img width="2860" height="1563" alt="Screenshot from 2026-04-12 23-13-37" src="https://github.com/user-attachments/assets/f299c8b8-522d-4b7b-a61d-1c126d4a161d" />
 
 **A decentralized, community-governed platform on Stellar + Soroban that enables fractional investment in local businesses with AI-driven scoring and no central authority.**
 
@@ -20,7 +20,7 @@
 | **CI/CD Pipeline** | ✅Done | [Check in GitHub](https://github.com/anindhabiswas25/InvestX/actions/workflows/ci.yml) |
 | **Smart Contract Deployed** | ✅Done | CCIMHOZAMXQXJRJJXAMBX2GXSGP6BCU7YRLYTJ5IJ446XEJYEW56UBAH |
 | **Mobile Responsive** | ✅Done | See screenchot view below |
-| **Registered Users | ✅Done | [35+ verified users Excel Sheet Data](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?gid=47422734#gid=47422734) |
+| **Registered Users** | ✅Done | [35+ verified users Excel Sheet Data](https://docs.google.com/spreadsheets/d/1MG5PhFI698WouwF6j5sU0aNFcvU6wT-Cdxr_Fecw1GE/edit?gid=47422734#gid=47422734) |
 
 ## Problem Statement
 
