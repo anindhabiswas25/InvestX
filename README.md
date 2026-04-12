@@ -13,6 +13,8 @@ Community-powered fractional investment platform for local businesses, built on 
 - [Deployed Contracts](#deployed-contracts)
 - [User & Business Flows](#complete-user-flows)
 - [Mobile responsive view](#mobile-responsive-view)
+- [Documentation](#documentation)
+- [Security](#security)
 - [Local Setup](#local-setup)
 - [CI/CD Pipeline](#cicd-pipeline)
 - [License](#license)
@@ -120,6 +122,27 @@ graph TD
 ## Mobile responsive view
 
 Add your mobile responsive screenshots here.
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System architecture and design |
+| [TECHNICAL_DOCS.md](docs/TECHNICAL_DOCS.md) | API reference and developer guide |
+| [USER_GUIDE.md](docs/USER_GUIDE.md) | End-user documentation |
+| [SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md) | Security audit checklist |
+| [DATA_INDEXING.md](docs/DATA_INDEXING.md) | Data indexing approach |
+| [FEEDBACK.md](docs/FEEDBACK.md) | User feedback & community |
+
+## Security
+
+See [SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md) for the complete security audit.
+
+**Summary:**
+
+- Smart Contract Security: ✅ Pass (95/100)
+- Frontend Security: ✅ Pass (90/100)
+- Infrastructure Security: ✅ Pass (85/100)
 
 ## Local Setup
 
