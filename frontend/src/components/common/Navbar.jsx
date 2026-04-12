@@ -1,21 +1,63 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { useWallet } from '../../hooks/useWallet';
 import { ADMIN_WALLET } from '../../context/AuthContext';
-import { FiMenu, FiX, FiLogOut, FiUser, FiChevronDown } from 'react-icons/fi';
+import { FiMenu, FiX, FiLogOut, FiUser, FiChevronDown, FiZap } from 'react-icons/fi';
 import NotificationBell from './NotificationBell';
+
+const NAV_LINKS = [
+  { to: '/explore', label: 'Explore' },
+  { to: '/governance', label: 'Governance' },
+];
+
+const DropItem = ({ to, label, accent, onClick }) => {
+  const colorClass =
+    accent === 'yellow' ? 'text-yellow-400 hover:bg-yellow-500/10' :
+    accent === 'purple' ? 'text-primary-400 hover:bg-primary-500/10' :
+    'text-gray-300 hover:bg-white/6';
+  return (
+    <Link to={to} onClick={onClick} className={`block px-4 py-2 text-sm rounded-lg mx-1 transition-colors ${colorClass}`}>
+      {label}
+    </Link>
+  );
+};
+
+const MobileLink = ({ to, label, onClick }) => (
+  <Link
+    to={to}
+    onClick={onClick}
+    className="block px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/6 rounded-xl transition-colors"
+  >
+    {label}
+  </Link>
+);
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { walletAddress, isConnected, disconnectWallet, connectWallet } = useWallet();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const normalizedWalletAddress = typeof walletAddress === 'string'
-    ? walletAddress
-    : walletAddress?.publicKey || walletAddress?.address || walletAddress?.walletAddress || '';
+  const [scrolled, setScrolled] = useState(false);
+
+  const normalizedWalletAddress =
+    typeof walletAddress === 'string'
+      ? walletAddress
+      : walletAddress?.publicKey || walletAddress?.address || walletAddress?.walletAddress || '';
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+    setDropdownOpen(false);
+  }, [location.pathname]);
 
   const handleDisconnect = () => {
     disconnectWallet();
@@ -24,136 +66,247 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const isAdmin = user?.role === 'admin' || normalizedWalletAddress.toLowerCase() === ADMIN_WALLET.toLowerCase();
+  const isAdmin =
+    user?.role === 'admin' ||
+    normalizedWalletAddress.toLowerCase() === ADMIN_WALLET.toLowerCase();
+
+  const shortAddr = normalizedWalletAddress
+    ? `${normalizedWalletAddress.slice(0, 4)}…${normalizedWalletAddress.slice(-4)}`
+    : 'Connected';
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">IX</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">InvestX</span>
-          </Link>
+    <nav className="fixed top-0 inset-x-0 z-50 px-4 sm:px-6 pt-4">
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/explore" className="text-gray-600 hover:text-primary-600 px-3 py-2 text-sm font-medium">
-              Explore
-            </Link>
-            <Link to="/governance" className="text-gray-600 hover:text-primary-600 px-3 py-2 text-sm font-medium">
-              Governance
-            </Link>
+      {/* ── Pill Container ── */}
+      <div
+        className="max-w-6xl mx-auto rounded-full flex items-center justify-between px-5 py-2.5 transition-all duration-300"
+        style={{
+          background: scrolled ? 'rgba(11,15,26,0.88)' : 'rgba(11,15,26,0.55)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.09)',
+          boxShadow: scrolled
+            ? '0 16px 40px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(124,77,255,0.18), inset 0 1px 0 rgba(255,255,255,0.07)'
+            : '0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
+        }}
+      >
+        {/* ── Logo (text only) ── */}
+        <Link to="/" className="flex items-center group flex-shrink-0">
+          <span className="text-xl font-bold text-white tracking-tight group-hover:opacity-90 transition-opacity">
+            Invest<span className="gradient-text">X</span>
+          </span>
+        </Link>
 
-            {/* Freighter Connect Button */}
-            {!isConnected ? (
-              <button 
-                onClick={connectWallet} 
-                className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition"
+        {/* ── Desktop nav links ── */}
+        <div className="hidden md:flex items-center space-x-1">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                location.pathname.startsWith(l.to)
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-white/6'
+              }`}
+            >
+              {location.pathname.startsWith(l.to) && (
+                <motion.span
+                  layoutId="activeNavPill"
+                  className="absolute inset-0 rounded-full -z-10"
+                  style={{ background: 'rgba(255,255,255,0.1)' }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+              {l.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* ── Desktop right side ── */}
+        <div className="hidden md:flex items-center space-x-2.5">
+          {!isConnected ? (
+            <>
+              <Link
+                to="/raise-funds"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors px-3.5 py-2 rounded-full hover:bg-white/6"
               >
-                Connect Freighter
+                Raise Funds
+              </Link>
+              <button
+                onClick={connectWallet}
+                className="flex items-center space-x-1.5 rounded-full text-sm font-semibold px-5 py-2 text-white transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, #7C4DFF 0%, #00C6FF 100%)',
+                  boxShadow: '0 4px 18px rgba(124,77,255,0.5)',
+                }}
+              >
+                <FiZap size={13} />
+                <span>Connect Wallet</span>
               </button>
-            ) : (
-              <>
-                <div className="bg-gray-100 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-700 border flex items-center shadow-sm">
-                  <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                  {normalizedWalletAddress ? `${normalizedWalletAddress.slice(0, 4)}...${normalizedWalletAddress.slice(-4)}` : 'Connected'}
-                </div>
-
-                {/* Notification Bell */}
-                <NotificationBell />
-
-                {/* User Dropdown */}
-                <div className="relative">
-                  <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center space-x-1 text-gray-700 px-3 py-2 text-sm font-medium hover:text-primary-600">
-                    <FiUser />
-                    <span>{user?.name?.split(' ')[0] || 'Account'}</span>
-                    <FiChevronDown className={`transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
+            </>
+          ) : (
+            <>
+              <div
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-sm font-mono text-gray-300"
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
+              >
+                <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse flex-shrink-0" />
+                <span>{shortAddr}</span>
+              </div>
+              <NotificationBell />
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-sm text-gray-300 hover:text-white transition-all hover:bg-white/6"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  <FiUser size={14} />
+                  <span>{user?.name?.split(' ')[0] || 'Account'}</span>
+                  <FiChevronDown
+                    size={13}
+                    className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <AnimatePresence>
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border py-1 z-50">
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-60 rounded-2xl py-2 border border-white/10"
+                      style={{
+                        background: 'rgba(13,17,30,0.96)',
+                        backdropFilter: 'blur(20px)',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+                      }}
+                    >
                       {isAdmin ? (
-                        <Link to="/admin" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Admin Panel</Link>
+                        <DropItem to="/admin" label="Admin Panel" onClick={() => setDropdownOpen(false)} />
                       ) : (
                         <>
-                          <Link to="/dashboard/investor" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Portfolio</Link>
-                          <Link to="/dividends" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Dividend History</Link>
-                          <Link to="/governance/my-votes" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Votes</Link>
+                          <DropItem to="/dashboard/investor" label="My Portfolio" onClick={() => setDropdownOpen(false)} />
+                          <DropItem to="/dividends" label="Dividend History" onClick={() => setDropdownOpen(false)} />
+                          <DropItem to="/governance/my-votes" label="My Votes" onClick={() => setDropdownOpen(false)} />
                           {user?.kycStatus !== 'verified' && (
-                            <Link to="/kyc" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-yellow-600 font-medium hover:bg-yellow-50">Complete KYC ⚡</Link>
+                            <DropItem to="/kyc" label="Complete KYC ⚡" accent="yellow" onClick={() => setDropdownOpen(false)} />
                           )}
-                          <hr className="my-1" />
-                          <Link to="/raise-funds" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-primary-600 font-medium hover:bg-primary-50">
-                            Want to Raise Funds?
-                          </Link>
+                          <div className="my-1 mx-3 h-px bg-white/8" />
+                          <DropItem to="/raise-funds" label="Raise Funds" accent="purple" onClick={() => setDropdownOpen(false)} />
                           {user?.role === 'business_owner' && (
                             <>
-                              <Link to="/dashboard/business" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Businesses</Link>
-                              <Link to="/apply-funding" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Apply for Funding</Link>
+                              <DropItem to="/dashboard/business" label="My Businesses" onClick={() => setDropdownOpen(false)} />
+                              <DropItem to="/apply-funding" label="Apply for Funding" onClick={() => setDropdownOpen(false)} />
                             </>
                           )}
                         </>
                       )}
-                      <hr className="my-1" />
-                      <button onClick={handleDisconnect} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2">
-                        <FiLogOut /> <span>Disconnect</span>
+                      <div className="my-1 mx-3 h-px bg-white/8" />
+                      <button
+                        onClick={handleDisconnect}
+                        className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors rounded-lg"
+                      >
+                        <FiLogOut size={14} />
+                        <span>Disconnect</span>
                       </button>
-                    </div>
+                    </motion.div>
                   )}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button className="md:hidden text-gray-600" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t px-4 pb-4">
-          <Link to="/explore" className="block py-2 text-gray-600" onClick={() => setMobileOpen(false)}>Explore</Link>
-          {!isConnected ? (
-            <div className="py-2">
-              <button 
-                onClick={() => { connectWallet(); setMobileOpen(false); }} 
-                className="w-full bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
-              >
-                Connect Freighter
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="py-2 px-3 bg-gray-50 rounded-lg text-sm font-mono text-gray-700 mb-2">
-                {normalizedWalletAddress ? `${normalizedWalletAddress.slice(0, 8)}...${normalizedWalletAddress.slice(-8)}` : 'Connected'}
+                </AnimatePresence>
               </div>
-              {isAdmin ? (
-                <Link to="/admin" className="block py-2 text-gray-600" onClick={() => setMobileOpen(false)}>Admin Panel</Link>
-              ) : (
-                <>
-                  <Link to="/dashboard/investor" className="block py-2 text-gray-600" onClick={() => setMobileOpen(false)}>My Portfolio</Link>
-                  <Link to="/dividends" className="block py-2 text-gray-600" onClick={() => setMobileOpen(false)}>Dividends</Link>
-                  <Link to="/governance" className="block py-2 text-gray-600" onClick={() => setMobileOpen(false)}>Governance</Link>
-                  <Link to="/governance/my-votes" className="block py-2 text-gray-600" onClick={() => setMobileOpen(false)}>My Votes</Link>
-                  {user?.kycStatus !== 'verified' && (
-                    <Link to="/kyc" className="block py-2 text-yellow-600 font-medium" onClick={() => setMobileOpen(false)}>Complete KYC ⚡</Link>
-                  )}
-                  <Link to="/raise-funds" className="block py-2 text-primary-600 font-medium" onClick={() => setMobileOpen(false)}>Raise Funds</Link>
-                  {user?.role === 'business_owner' && (
-                    <Link to="/dashboard/business" className="block py-2 text-gray-600" onClick={() => setMobileOpen(false)}>My Businesses</Link>
-                  )}
-                </>
-              )}
-              <button onClick={() => { handleDisconnect(); setMobileOpen(false); }} className="block py-2 text-red-600">Disconnect</button>
             </>
           )}
         </div>
-      )}
+
+        {/* ── Mobile burger ── */}
+        <button
+          className="md:hidden text-gray-400 hover:text-white transition-colors p-1.5 rounded-full hover:bg-white/6"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+        </button>
+      </div>
+
+      {/* ── Mobile menu (drops below pill) ── */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.97 }}
+            transition={{ duration: 0.2 }}
+            className="max-w-6xl mx-auto mt-2 rounded-3xl border border-white/8 overflow-hidden"
+            style={{
+              background: 'rgba(11,15,26,0.96)',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.45)',
+            }}
+          >
+            <div className="px-4 py-4 space-y-1">
+              {NAV_LINKS.map((l) => (
+                <MobileLink key={l.to} to={l.to} label={l.label} onClick={() => setMobileOpen(false)} />
+              ))}
+              <div className="pt-2 border-t border-white/8 space-y-2">
+                {!isConnected ? (
+                  <>
+                    <Link
+                      to="/raise-funds"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/6 rounded-xl transition-colors"
+                    >
+                      Raise Funds
+                    </Link>
+                    <button
+                      onClick={() => { connectWallet(); setMobileOpen(false); }}
+                      className="w-full rounded-full text-sm font-semibold py-2.5 text-white flex items-center justify-center space-x-2 transition-all hover:brightness-110"
+                      style={{
+                        background: 'linear-gradient(135deg, #7C4DFF 0%, #00C6FF 100%)',
+                        boxShadow: '0 4px 18px rgba(124,77,255,0.4)',
+                      }}
+                    >
+                      <FiZap size={14} />
+                      <span>Connect Wallet</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className="px-3 py-2 rounded-xl text-sm font-mono text-gray-400 flex items-center space-x-2"
+                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    >
+                      <span className="w-2 h-2 rounded-full bg-teal-400 flex-shrink-0" />
+                      <span className="truncate">{shortAddr}</span>
+                    </div>
+                    {isAdmin ? (
+                      <MobileLink to="/admin" label="Admin Panel" onClick={() => setMobileOpen(false)} />
+                    ) : (
+                      <>
+                        <MobileLink to="/dashboard/investor" label="My Portfolio" onClick={() => setMobileOpen(false)} />
+                        <MobileLink to="/dividends" label="Dividend History" onClick={() => setMobileOpen(false)} />
+                        <MobileLink to="/governance/my-votes" label="My Votes" onClick={() => setMobileOpen(false)} />
+                        {user?.kycStatus !== 'verified' && (
+                          <MobileLink to="/kyc" label="Complete KYC ⚡" onClick={() => setMobileOpen(false)} />
+                        )}
+                        <MobileLink to="/raise-funds" label="Raise Funds" onClick={() => setMobileOpen(false)} />
+                        {user?.role === 'business_owner' && (
+                          <MobileLink to="/dashboard/business" label="My Businesses" onClick={() => setMobileOpen(false)} />
+                        )}
+                      </>
+                    )}
+                    <button
+                      onClick={() => { handleDisconnect(); setMobileOpen(false); }}
+                      className="w-full text-left px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/8 rounded-xl flex items-center space-x-2 transition-colors"
+                    >
+                      <FiLogOut size={14} />
+                      <span>Disconnect</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

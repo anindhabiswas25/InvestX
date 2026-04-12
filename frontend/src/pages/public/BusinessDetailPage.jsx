@@ -21,11 +21,24 @@ import {
   FiAlertTriangle,
   FiLink,
   FiShield,
+  FiTrendingUp,
+  FiDollarSign,
 } from "react-icons/fi";
+
+const STATUS_BADGE = {
+  verifying: "badge badge-cyan",
+  vote_required: "badge badge-neon",
+  voting: "badge badge-neon",
+  approved: "badge badge-success",
+  rejected: "badge bg-red-500/15 text-red-400 border border-red-500/25",
+  fundraising: "badge badge-teal",
+  active: "badge badge-success",
+  funded: "badge badge-neon",
+};
 
 const BusinessDetailPage = () => {
   const { id } = useParams();
-  useAuth(); // Initialize auth context
+  useAuth();
   const { isConnected, connectWallet } = useWallet();
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -45,28 +58,16 @@ const BusinessDetailPage = () => {
   if (loading) return <LoadingSpinner message="Loading business details..." />;
   if (!business)
     return (
-      <div className="text-center py-20 text-gray-500">Business not found</div>
+      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
+        <p className="text-gray-400">Business not found</p>
+      </div>
     );
 
   const {
-    name,
-    category,
-    description,
-    yearsInOperation,
-    riskRating,
-    aiCreditScore,
-    aiAnalysis,
-    raisedAmount = 0,
-    fundingGoal = 0,
-    revenueSharePercentage,
-    fundingDeadline,
-    photos,
-    status,
-    revenueSharingDuration,
-    documents,
-    location,
-    financials,
-    tokenDetails,
+    name, category, description, yearsInOperation, riskRating,
+    aiCreditScore, aiAnalysis, raisedAmount = 0, fundingGoal = 0,
+    revenueSharePercentage, fundingDeadline, photos, status,
+    revenueSharingDuration, documents, location, financials, tokenDetails,
   } = business;
 
   const city = location?.city;
@@ -75,292 +76,194 @@ const BusinessDetailPage = () => {
   const profitMargin = financials?.profitMargin;
   const tokenPriceINR = tokenDetails?.tokenPrice;
   const tokenContractAddress = tokenDetails?.contractAddress;
-
   const daysLeft = calculateDaysRemaining(fundingDeadline);
 
   const renderInvestButton = () => {
     if (!isConnected)
       return (
-        <button
-          onClick={connectWallet}
-          className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700 flex items-center justify-center"
-        >
+        <button onClick={connectWallet} className="btn-primary w-full">
           <FiLink className="mr-2" /> Connect Wallet to Invest
         </button>
       );
     if (status !== "fundraising")
       return (
-        <button
-          disabled
-          className="w-full bg-gray-300 text-gray-500 py-3 rounded-lg font-medium cursor-not-allowed"
-        >
+        <button disabled className="w-full py-3 rounded-xl font-semibold text-sm bg-white/5 text-gray-500 cursor-not-allowed border border-white/10">
           Fundraising Closed
         </button>
       );
     return (
-      <button
-        onClick={() => setShowModal(true)}
-        className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700"
-      >
-        Invest Now
+      <button onClick={() => setShowModal(true)} className="btn-primary w-full">
+        <FiTrendingUp className="mr-2" /> Invest Now
       </button>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-dark-900 pt-20 pb-12">
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="glow-orb w-96 h-96 bg-primary-600 absolute -top-48 -left-24 opacity-10" />
+        <div className="glow-orb w-80 h-80 bg-cyan-500 absolute top-1/2 -right-20 opacity-8" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="flex-1 space-y-6">
             {/* Photo Gallery */}
             {photos?.length > 0 && (
-              <div className="grid grid-cols-2 gap-2 rounded-xl overflow-hidden mb-6">
-                <img
-                  src={photos[0]?.url || photos[0]}
-                  alt={name}
-                  className="col-span-2 h-64 w-full object-cover"
-                />
+              <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden">
+                <img src={photos[0]?.url || photos[0]} alt={name} className="col-span-2 h-72 w-full object-cover" />
                 {photos.slice(1, 3).map((p, i) => (
-                  <img
-                    key={i}
-                    src={p?.url || p}
-                    alt=""
-                    className="h-32 w-full object-cover"
-                  />
+                  <img key={i} src={p?.url || p} alt="" className="h-36 w-full object-cover" />
                 ))}
               </div>
             )}
 
-            {/* Header */}
-            <div className="bg-white rounded-xl border p-6 mb-6">
-              <div className="flex items-start justify-between mb-2">
+            {/* Header Card */}
+            <div className="glass rounded-2xl p-6">
+              <div className="flex items-start justify-between mb-4">
                 <div>
-                  <span className="text-sm text-primary-600 font-medium uppercase">
-                    {category}
-                  </span>
-                  <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
-                  <p className="text-gray-500 flex items-center mt-1">
-                    <FiMapPin className="mr-1" /> {city}, {state}
+                  <span className="badge badge-neon mb-2 inline-flex">{category}</span>
+                  <h1 className="text-3xl font-bold text-white">{name}</h1>
+                  <p className="text-gray-400 flex items-center mt-2 text-sm">
+                    <FiMapPin className="mr-1.5 text-primary-400" /> {city}, {state}
                   </p>
                 </div>
                 <RiskBadge rating={riskRating} />
               </div>
-              {description && (
-                <p className="text-gray-600 mt-4">{description}</p>
-              )}
+              {description && <p className="text-gray-300 leading-relaxed">{description}</p>}
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-xs text-gray-500">Years Operating</div>
-                  <div className="font-semibold">
-                    {yearsInOperation || "N/A"}
+                {[
+                  { label: "Years Operating", value: yearsInOperation || "N/A" },
+                  { label: "Revenue Share", value: `${revenueSharePercentage || 0}%` },
+                  { label: "AI Score", value: `${aiCreditScore || "N/A"}/100`, accent: true },
+                  { label: "Investors", value: business.investorCount || 0 },
+                ].map((s, i) => (
+                  <div key={i} className="text-center p-4 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                    <div className="text-xs text-gray-500 mb-1">{s.label}</div>
+                    <div className={`font-bold text-lg ${s.accent ? "gradient-text" : "text-white"}`}>{s.value}</div>
                   </div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-xs text-gray-500">Revenue Share</div>
-                  <div className="font-semibold">
-                    {revenueSharePercentage || 0}%
-                  </div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-xs text-gray-500">AI Score</div>
-                  <div className="font-semibold text-primary-600">
-                    {aiCreditScore || "N/A"}/100
-                  </div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-xs text-gray-500">Investors</div>
-                  <div className="font-semibold">
-                    {business.investorCount || 0}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
             {/* Governance Status */}
-            {[
-              "verifying",
-              "vote_required",
-              "voting",
-              "approved",
-              "rejected",
-            ].includes(status) && (
-              <div
-                className={`rounded-xl border p-5 mb-6 ${
-                  status === "approved"
-                    ? "bg-green-50 border-green-200"
-                    : status === "rejected"
-                      ? "bg-red-50 border-red-200"
-                      : "bg-blue-50 border-blue-200"
-                }`}
-              >
+            {["verifying","vote_required","voting","approved","rejected"].includes(status) && (
+              <div className={`rounded-2xl border p-5 ${
+                status === "approved" ? "bg-emerald-500/10 border-emerald-500/20" :
+                status === "rejected" ? "bg-red-500/10 border-red-500/20" :
+                "bg-primary-500/10 border-primary-500/20"
+              }`}>
                 <div className="flex items-center gap-2 mb-2">
-                  <FiShield
-                    className={`text-lg ${
-                      status === "approved"
-                        ? "text-green-600"
-                        : status === "rejected"
-                          ? "text-red-600"
-                          : "text-blue-600"
-                    }`}
-                  />
-                  <h2 className="font-semibold text-gray-900">
-                    Governance Status
-                  </h2>
+                  <FiShield className={`text-lg ${status === "approved" ? "text-emerald-400" : status === "rejected" ? "text-red-400" : "text-primary-400"}`} />
+                  <h2 className="font-semibold text-white">Governance Status</h2>
+                  <span className={STATUS_BADGE[status] || "badge badge-neon"}>{status.replace(/_/g, " ")}</span>
                 </div>
-                <p className="text-sm text-gray-700">
-                  {status === "verifying" &&
-                    "Documents are being verified by the oracle service. A governance vote will be created automatically."}
-                  {status === "vote_required" &&
-                    "Oracle verification complete. A community governance vote is being created."}
-                  {status === "voting" &&
-                    "This business is currently under community governance vote. Connected wallets can vote on approval (1 wallet = 1 vote)."}
-                  {status === "approved" &&
-                    "This business was approved by community governance vote. Fundraising is now active."}
-                  {status === "rejected" &&
-                    "This business was rejected by community governance vote."}
+                <p className="text-sm text-gray-300">
+                  {status === "verifying" && "Documents are being verified by the oracle. A governance vote will be created automatically."}
+                  {status === "vote_required" && "Oracle verification complete. A community governance vote is being created."}
+                  {status === "voting" && "Community members are voting on your application. Connected wallets can vote (1 wallet = 1 vote)."}
+                  {status === "approved" && "Approved by community governance vote. Fundraising is now active."}
+                  {status === "rejected" && "This business was rejected by community governance vote."}
                 </p>
-                {(status === "voting" || status === "approved") &&
-                  business.proposalId && (
-                    <Link
-                      to={`/governance/proposals/${business.proposalId}`}
-                      className="inline-flex items-center mt-2 text-sm text-primary-600 hover:underline font-medium"
-                    >
-                      View Governance Proposal{" "}
-                      <FiExternalLink className="ml-1" />
-                    </Link>
-                  )}
+                {(status === "voting" || status === "approved") && business.proposalId && (
+                  <Link to={`/governance/proposals/${business.proposalId}`}
+                    className="inline-flex items-center mt-3 text-sm text-primary-400 hover:text-primary-300 font-medium">
+                    View Governance Proposal <FiExternalLink className="ml-1" />
+                  </Link>
+                )}
               </div>
             )}
 
             {/* Financial Overview */}
-            <div className="bg-white rounded-xl border p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Financial Overview
+            <div className="glass rounded-2xl p-6">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center">
+                <FiDollarSign className="mr-2 text-primary-400" /> Financial Overview
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-500">Avg Monthly Revenue</span>
-                  <div className="font-semibold">
-                    {formatCurrency(averageMonthlyRevenue)}
+                {[
+                  { label: "Avg Monthly Revenue", value: formatCurrency(averageMonthlyRevenue) },
+                  { label: "Profit Margin", value: `${profitMargin || 0}%` },
+                  { label: "Revenue Share", value: `${revenueSharePercentage || 0}%` },
+                  { label: "Duration", value: `${revenueSharingDuration || 0} months` },
+                  { label: "Token Price", value: formatCurrency(tokenPriceINR) },
+                  { label: "Funding Goal", value: formatCurrency(fundingGoal) },
+                ].map((item, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <div className="text-gray-500 text-xs mb-1">{item.label}</div>
+                    <div className="font-semibold text-white">{item.value}</div>
                   </div>
-                </div>
-                <div>
-                  <span className="text-gray-500">Profit Margin</span>
-                  <div className="font-semibold">{profitMargin || 0}%</div>
-                </div>
-                <div>
-                  <span className="text-gray-500">Revenue Share</span>
-                  <div className="font-semibold">
-                    {revenueSharePercentage || 0}%
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-500">Duration</span>
-                  <div className="font-semibold">
-                    {revenueSharingDuration || 0} months
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-500">Token Price</span>
-                  <div className="font-semibold">
-                    {formatCurrency(tokenPriceINR)}
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-500">Funding Goal</span>
-                  <div className="font-semibold">
-                    {formatCurrency(fundingGoal)}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
             {/* AI Analysis */}
             {aiAnalysis && (
-              <div className="bg-white rounded-xl border p-6 mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  AI Analysis Report
-                </h2>
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-24 h-24 rounded-full border-4 border-primary-500 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-primary-600">
-                      {aiCreditScore}
-                    </span>
+              <div className="glass rounded-2xl p-6">
+                <h2 className="text-lg font-bold text-white mb-4">AI Analysis Report</h2>
+                <div className="flex items-center justify-center mb-6">
+                  <div className="w-28 h-28 rounded-full relative flex items-center justify-center"
+                    style={{ background: "conic-gradient(from 0deg, #7C4DFF, #00C6FF, #7C4DFF)", padding: "3px" }}>
+                    <div className="w-full h-full rounded-full bg-dark-800 flex items-center justify-center">
+                      <span className="text-3xl font-black gradient-text">{aiCreditScore}</span>
+                    </div>
                   </div>
                 </div>
-                {aiAnalysis.positiveFactors?.length > 0 && (
-                  <div className="mb-4">
-                    <h3 className="text-sm font-semibold text-green-700 mb-2">
-                      Positive Factors
-                    </h3>
-                    {aiAnalysis.positiveFactors.map((f, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start space-x-2 text-sm text-gray-600 mb-1"
-                      >
-                        <FiCheckCircle className="text-green-500 mt-0.5 flex-shrink-0" />{" "}
-                        <span>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {aiAnalysis.riskFactors?.length > 0 && (
-                  <div className="mb-4">
-                    <h3 className="text-sm font-semibold text-orange-700 mb-2">
-                      Risk Factors
-                    </h3>
-                    {aiAnalysis.riskFactors.map((f, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start space-x-2 text-sm text-gray-600 mb-1"
-                      >
-                        <FiAlertTriangle className="text-orange-500 mt-0.5 flex-shrink-0" />{" "}
-                        <span>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="grid md:grid-cols-2 gap-4">
+                  {aiAnalysis.positiveFactors?.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-emerald-400 mb-2">Positive Factors</h3>
+                      {aiAnalysis.positiveFactors.map((f, i) => (
+                        <div key={i} className="flex items-start space-x-2 text-sm text-gray-300 mb-1.5">
+                          <FiCheckCircle className="text-emerald-400 mt-0.5 flex-shrink-0" />
+                          <span>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {aiAnalysis.riskFactors?.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-amber-400 mb-2">Risk Factors</h3>
+                      {aiAnalysis.riskFactors.map((f, i) => (
+                        <div key={i} className="flex items-start space-x-2 text-sm text-gray-300 mb-1.5">
+                          <FiAlertTriangle className="text-amber-400 mt-0.5 flex-shrink-0" />
+                          <span>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 {aiAnalysis.recommendation && (
-                  <p className="text-sm text-gray-600">
-                    <strong>Recommendation:</strong> {aiAnalysis.recommendation}
-                  </p>
+                  <div className="mt-4 p-3 rounded-xl bg-primary-500/10 border border-primary-500/20">
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-primary-400">Recommendation:</strong> {aiAnalysis.recommendation}
+                    </p>
+                  </div>
                 )}
               </div>
             )}
 
             {/* Token Contract */}
             {tokenContractAddress && (
-              <div className="bg-white rounded-xl border p-6 mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  On-Chain Token
-                </h2>
-                <a
-                  href={getStellarExplorerUrl("token", tokenContractAddress)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary-600 hover:underline flex items-center"
-                >
-                  View on Stellar Explorer <FiExternalLink className="ml-1" />
+              <div className="glass rounded-2xl p-5">
+                <h2 className="text-sm font-bold text-white mb-2">On-Chain Token</h2>
+                <a href={getStellarExplorerUrl("token", tokenContractAddress)} target="_blank" rel="noopener noreferrer"
+                  className="text-sm text-primary-400 hover:text-primary-300 flex items-center">
+                  View on Stellar Explorer <FiExternalLink className="ml-1.5" />
                 </a>
               </div>
             )}
 
             {/* Documents */}
             {documents?.length > 0 && (
-              <div className="bg-white rounded-xl border p-6 mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Legal Documents
-                </h2>
+              <div className="glass rounded-2xl p-6">
+                <h2 className="text-lg font-bold text-white mb-4">Legal Documents</h2>
                 {documents.map((d, i) => (
-                  <a
-                    key={i}
-                    href={d.url || d}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-sm text-primary-600 hover:underline mb-1 flex items-center"
-                  >
-                    <FiExternalLink className="mr-1" /> Document {i + 1}
+                  <a key={i} href={d.url || d} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center text-sm text-primary-400 hover:text-primary-300 mb-2">
+                    <FiExternalLink className="mr-1.5" /> Document {i + 1}
                   </a>
                 ))}
               </div>
@@ -369,38 +272,27 @@ const BusinessDetailPage = () => {
 
           {/* Sticky Investment Panel */}
           <div className="lg:w-80 flex-shrink-0">
-            <div className="bg-white rounded-xl border p-6 sticky top-20">
+            <div className="glass-strong rounded-2xl p-6 sticky top-24">
+              <h3 className="font-bold text-white mb-4">Investment Summary</h3>
               <ProgressBar raised={raisedAmount} goal={fundingGoal} />
-              <div className="flex justify-between text-sm text-gray-500 mt-3 mb-4">
-                <span>
-                  <FiUsers className="inline mr-1" />
-                  {business.investorCount || 0} investors
-                </span>
-                <span>
-                  <FiCalendar className="inline mr-1" />
-                  {daysLeft} days left
-                </span>
+              <div className="flex justify-between text-sm text-gray-400 mt-3 mb-5">
+                <span className="flex items-center"><FiUsers className="mr-1 text-primary-400" />{business.investorCount || 0} investors</span>
+                <span className="flex items-center"><FiCalendar className="mr-1 text-cyan-400" />{daysLeft} days left</span>
               </div>
-              <div className="text-sm text-gray-600 mb-4 space-y-1">
-                <div className="flex justify-between">
-                  <span>Token Price</span>
-                  <span className="font-semibold">
-                    {formatCurrency(tokenPriceINR)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Revenue Share</span>
-                  <span className="font-semibold">
-                    {revenueSharePercentage}%
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Duration</span>
-                  <span className="font-semibold">
-                    {revenueSharingDuration} mo
-                  </span>
-                </div>
+
+              <div className="space-y-3 mb-5">
+                {[
+                  { label: "Token Price", value: formatCurrency(tokenPriceINR) },
+                  { label: "Revenue Share", value: `${revenueSharePercentage}%` },
+                  { label: "Duration", value: `${revenueSharingDuration} mo` },
+                ].map((item, i) => (
+                  <div key={i} className="flex justify-between text-sm p-2.5 rounded-lg bg-white/[0.03]">
+                    <span className="text-gray-400">{item.label}</span>
+                    <span className="font-semibold text-white">{item.value}</span>
+                  </div>
+                ))}
               </div>
+
               {renderInvestButton()}
             </div>
           </div>
@@ -413,12 +305,7 @@ const BusinessDetailPage = () => {
           onClose={() => setShowModal(false)}
           onSuccess={() => {
             setShowModal(false);
-            // Reload business data
-            getBusinessById(id)
-              .then((res) =>
-                setBusiness(res.data.data?.business || res.data.data),
-              )
-              .catch(() => {});
+            getBusinessById(id).then((res) => setBusiness(res.data.data?.business || res.data.data)).catch(() => {});
           }}
         />
       )}
@@ -427,3 +314,4 @@ const BusinessDetailPage = () => {
 };
 
 export default BusinessDetailPage;
+

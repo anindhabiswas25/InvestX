@@ -2,19 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getSuccessStories } from "../../services/business.api";
 import { formatCurrency, formatXLM } from "../../utils/formatters";
+import { motion } from "framer-motion";
+import AnimatedSection from "../ui/AnimatedSection";
 import {
-  FiUsers,
-  FiTrendingUp,
-  FiAward,
-  FiStar,
-  FiCheckCircle,
-  FiArrowRight,
+  FiUsers, FiTrendingUp, FiAward, FiStar, FiCheckCircle, FiArrowRight,
 } from "react-icons/fi";
 
-const RISK_COLORS = {
-  low: "text-green-600 bg-green-50",
-  medium: "text-yellow-600 bg-yellow-50",
-  high: "text-red-600 bg-red-50",
+const RISK_CONFIG = {
+  LOW:    'badge-success',
+  MEDIUM: 'badge-warning',
+  HIGH:   'bg-red-500/15 text-red-400 border border-red-500/25',
 };
 
 const SuccessStories = () => {
@@ -34,11 +31,11 @@ const SuccessStories = () => {
 
   if (loading) {
     return (
-      <section className="py-16 px-4 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="py-24 relative overflow-hidden" style={{ background: '#111827' }}>
+        <div className="section-container text-center">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-64 mx-auto"></div>
-            <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+            <div className="h-6 rounded-full w-48 mx-auto" style={{ background: 'rgba(255,255,255,0.06)' }} />
+            <div className="h-4 rounded-full w-72 mx-auto" style={{ background: 'rgba(255,255,255,0.04)' }} />
           </div>
         </div>
       </section>
@@ -48,189 +45,141 @@ const SuccessStories = () => {
   if (stories.length === 0) return null;
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-white to-emerald-50">
-      <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-            <FiCheckCircle /> Proven Track Record
+    <section className="py-24 relative overflow-hidden" style={{ background: '#111827' }}>
+      <div className="section-container relative z-10">
+        <AnimatedSection variant="fade-up" className="text-center mb-14">
+          <div className="badge badge-success mb-4 inline-flex">
+            <FiCheckCircle size={11} className="mr-1" /> Proven Track Record
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            Successfully Funded Businesses
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-3">
+            Successfully <span className="gradient-text-teal">Funded</span>
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            Real local businesses that reached their funding goals, are now
-            operating, and actively sharing profits with their investors
-            on-chain.
+          <p className="text-gray-400 max-w-lg mx-auto">
+            Real local businesses that reached their goals and are actively sharing profits on-chain.
           </p>
-        </div>
+        </AnimatedSection>
 
-        {/* Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stories.map((story) => (
-            <div
+          {stories.map((story, i) => (
+            <motion.div
               key={story._id}
-              className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: i * 0.08 }}
+              className="glass rounded-2xl overflow-hidden border border-white/8 hover:border-teal-400/25 hover:shadow-neon-teal transition-all duration-300"
             >
-              {/* Header */}
-              <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 text-white">
-                <div className="flex items-start justify-between">
+              {/* Header gradient */}
+              <div
+                className="p-5"
+                style={{ background: 'linear-gradient(135deg, rgba(0,198,255,0.12), rgba(0,245,212,0.08))' }}
+              >
+                <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-lg font-bold">{story.name}</h3>
-                    <p className="text-emerald-100 text-sm">
+                    <h3 className="text-base font-bold text-white">{story.name}</h3>
+                    <p className="text-xs text-gray-400 mt-0.5">
                       {story.category} &bull; {story.city}, {story.state}
                     </p>
                   </div>
                   {story.aiCreditScore && (
-                    <div className="bg-white/20 backdrop-blur-sm rounded-lg px-2.5 py-1 text-center">
-                      <div className="text-lg font-bold">
-                        {story.aiCreditScore}
-                      </div>
-                      <div className="text-[10px] uppercase tracking-wide opacity-80">
-                        AI Score
-                      </div>
+                    <div
+                      className="rounded-xl px-2.5 py-1.5 text-center flex-shrink-0"
+                      style={{ background: 'rgba(0,245,212,0.12)', border: '1px solid rgba(0,245,212,0.2)' }}
+                    >
+                      <div className="text-lg font-bold text-teal-400 leading-none">{story.aiCreditScore}</div>
+                      <div className="text-[9px] text-gray-500 uppercase tracking-wide mt-0.5">AI</div>
                     </div>
                   )}
                 </div>
-                <p className="text-emerald-100 text-xs mt-2">
-                  by {story.ownerName}
-                </p>
+                <p className="text-xs text-gray-500 mt-2">by {story.ownerName}</p>
               </div>
 
-              {/* Business Report */}
+              {/* Body */}
               <div className="p-5 space-y-4">
-                {/* Key Metrics */}
+                {/* Metrics */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
-                    <div className="text-xs text-gray-500 mb-0.5">Raised</div>
-                    <div className="text-sm font-bold text-gray-900">
-                      {formatCurrency(story.raisedAmount)}
-                    </div>
-                    <div className="text-[10px] text-gray-400">
-                      of {formatCurrency(story.fundingGoal)} goal
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
-                    <div className="text-xs text-gray-500 mb-0.5">
-                      Investors
-                    </div>
-                    <div className="text-sm font-bold text-gray-900 flex items-center justify-center gap-1">
-                      <FiUsers className="text-primary-500" />{" "}
-                      {story.investorCount}
-                    </div>
-                    <div className="text-[10px] text-gray-400">
-                      {story.tokensSold || 0}/{story.totalTokens} tokens sold
-                    </div>
-                  </div>
+                  <MetricBox label="Raised" value={formatCurrency(story.raisedAmount)} sub={`of ${formatCurrency(story.fundingGoal)}`} />
+                  <MetricBox
+                    label="Investors"
+                    value={<span className="flex items-center justify-center gap-1"><FiUsers size={13} />{story.investorCount}</span>}
+                    sub={`${story.tokensSold || 0}/${story.totalTokens} tokens`}
+                  />
                 </div>
 
-                {/* Dividends Report */}
-                <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-3">
-                  <h4 className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-2 flex items-center gap-1">
-                    <FiTrendingUp /> Investor Returns
+                {/* Returns */}
+                <div
+                  className="rounded-xl p-3.5 space-y-2"
+                  style={{ background: 'rgba(0,245,212,0.06)', border: '1px solid rgba(0,245,212,0.12)' }}
+                >
+                  <h4 className="text-xs font-semibold text-teal-400 uppercase tracking-wider flex items-center gap-1">
+                    <FiTrendingUp size={11} /> Investor Returns
                   </h4>
-                  <div className="space-y-1.5 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">
-                        Total Dividends Paid
-                      </span>
-                      <span className="font-semibold text-emerald-700">
-                        {formatCurrency(story.totalDividendsPaidINR)}
-                      </span>
+                  <ReturnRow label="Total Dividends Paid" value={formatCurrency(story.totalDividendsPaidINR)} />
+                  <ReturnRow label="On-chain (XLM)" value={formatXLM(story.totalDividendsPaidXLM || story.totalDividendsPaidCELO)} />
+                  <ReturnRow label="Months Active" value={story.monthsActive} />
+                  {story.avgMonthlyReturnPct > 0 && (
+                    <div className="flex justify-between pt-2 border-t border-teal-400/15 text-sm">
+                      <span className="text-gray-500">Avg Monthly Return</span>
+                      <span className="font-bold text-teal-400">{story.avgMonthlyReturnPct}%</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">On-chain (XLM)</span>
-                      <span className="font-semibold text-emerald-700">
-                        {formatXLM(
-                          story.totalDividendsPaidXLM ||
-                            story.totalDividendsPaidCELO,
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Months Active</span>
-                      <span className="font-semibold">
-                        {story.monthsActive}
-                      </span>
-                    </div>
-                    {story.avgMonthlyReturnPct > 0 && (
-                      <div className="flex justify-between border-t border-emerald-200 pt-1.5 mt-1.5">
-                        <span className="text-gray-600">
-                          Avg Monthly Return
-                        </span>
-                        <span className="font-bold text-emerald-700">
-                          {story.avgMonthlyReturnPct}%
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
-                {/* Investor Feedback Summary */}
-                <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                  <h4 className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2 flex items-center gap-1">
-                    <FiStar /> Investor Feedback
+                {/* Checks */}
+                <div
+                  className="rounded-xl p-3.5 space-y-2"
+                  style={{ background: 'rgba(124,77,255,0.05)', border: '1px solid rgba(124,77,255,0.1)' }}
+                >
+                  <h4 className="text-xs font-semibold text-primary-400 uppercase tracking-wider flex items-center gap-1">
+                    <FiStar size={11} /> Highlights
                   </h4>
-                  <div className="space-y-1.5 text-sm">
+                  <CheckItem text={`${Math.round((story.raisedAmount / story.fundingGoal) * 100)}% funded`} />
+                  <CheckItem text={`${story.investorCount} investors earning ${story.revenueSharePercentage}% revenue share`} />
+                  {story.totalDividendsPaidINR > 0 && <CheckItem text="Dividends paid on-chain via smart contract" />}
+                  {story.riskRating && (
                     <div className="flex items-center gap-2">
-                      <FiCheckCircle className="text-green-500 flex-shrink-0" />
-                      <span className="text-gray-600">
-                        Funding goal reached —{" "}
-                        {Math.round(
-                          (story.raisedAmount / story.fundingGoal) * 100,
-                        )}
-                        % funded
-                      </span>
+                      <FiAward size={12} className="text-primary-400 flex-shrink-0" />
+                      <span className="text-xs text-gray-400">Risk: <span className={`badge ${RISK_CONFIG[story.riskRating?.toUpperCase()] || 'badge-neon'} ml-1`}>{story.riskRating}</span></span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <FiCheckCircle className="text-green-500 flex-shrink-0" />
-                      <span className="text-gray-600">
-                        {story.investorCount} investor
-                        {story.investorCount !== 1 ? "s" : ""} earning{" "}
-                        {story.revenueSharePercentage}% revenue share
-                      </span>
-                    </div>
-                    {story.totalDividendsPaidINR > 0 && (
-                      <div className="flex items-center gap-2">
-                        <FiCheckCircle className="text-green-500 flex-shrink-0" />
-                        <span className="text-gray-600">
-                          Dividends paid on-chain via smart contract
-                        </span>
-                      </div>
-                    )}
-                    {story.riskRating && (
-                      <div className="flex items-center gap-2">
-                        <FiAward className="text-blue-500 flex-shrink-0" />
-                        <span className="text-gray-600">
-                          Risk Rating:{" "}
-                          <span
-                            className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
-                              RISK_COLORS[story.riskRating] ||
-                              "text-gray-600 bg-gray-100"
-                            }`}
-                          >
-                            {story.riskRating}
-                          </span>
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
-                {/* CTA */}
                 <Link
                   to={`/businesses/${story._id}`}
-                  className="block text-center text-sm font-medium text-primary-600 hover:text-primary-700 pt-1 flex items-center justify-center gap-1"
+                  className="flex items-center justify-center space-x-1.5 text-sm font-medium text-teal-400 hover:text-teal-300 transition-colors pt-1"
                 >
-                  View Full Business Details <FiArrowRight />
+                  <span>View Business Details</span>
+                  <FiArrowRight size={13} />
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
 };
+
+const MetricBox = ({ label, value, sub }) => (
+  <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+    <div className="text-[10px] text-gray-500 mb-0.5 uppercase tracking-wide">{label}</div>
+    <div className="text-sm font-bold text-white">{value}</div>
+    {sub && <div className="text-[10px] text-gray-600 mt-0.5">{sub}</div>}
+  </div>
+);
+
+const ReturnRow = ({ label, value }) => (
+  <div className="flex justify-between text-xs">
+    <span className="text-gray-500">{label}</span>
+    <span className="font-semibold text-gray-300">{value}</span>
+  </div>
+);
+
+const CheckItem = ({ text }) => (
+  <div className="flex items-center gap-2">
+    <FiCheckCircle size={12} className="text-teal-400 flex-shrink-0" />
+    <span className="text-xs text-gray-400">{text}</span>
+  </div>
+);
 
 export default SuccessStories;
