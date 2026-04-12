@@ -71,7 +71,7 @@ graph TD
 ```
 ## Mobile Responsive View
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c5224c9a-d6ee-47e8-808a-08f0bbcd4b8e" width="300"/>
+  <img src="https://github.com/user-attachments/assets/c5224c9a-d6ee-47e8-808a-08f0bbcd4b8e" width="250"/>
 </p>
 
 ## CI/CD Pipeline
