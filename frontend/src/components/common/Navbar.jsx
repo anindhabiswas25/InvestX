@@ -75,19 +75,17 @@ const Navbar = () => {
     : 'Connected';
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 px-4 sm:px-6 pt-4">
+    <nav className="fixed top-0 inset-x-0 z-50 md:px-4 md:pt-4">
 
-      {/* ── Pill Container ── */}
+      {/* ── Mobile bar / Desktop pill ── */}
       <div
-        className="max-w-6xl mx-auto rounded-full flex items-center justify-between px-5 py-2.5 transition-all duration-300"
+        className="flex items-center justify-between px-5 py-3 md:py-2.5 md:max-w-6xl md:mx-auto md:rounded-full transition-all duration-300"
         style={{
-          background: scrolled ? 'rgba(11,15,26,0.88)' : 'rgba(11,15,26,0.55)',
+          background: scrolled ? 'rgba(11,15,26,0.95)' : 'rgba(11,15,26,0.75)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.09)',
-          boxShadow: scrolled
-            ? '0 16px 40px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(124,77,255,0.18), inset 0 1px 0 rgba(255,255,255,0.07)'
-            : '0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: scrolled ? '0 8px 32px rgba(0,0,0,0.4)' : 'none',
         }}
       >
         {/* ── Logo (text only) ── */}
