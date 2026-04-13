@@ -140,7 +140,7 @@ graph TD
 | User Name | User Email | User Wallet Address | Commit ID | User's Feedback | Implemented |
 |----------|-----------|---------------------|-----------|------------------|---------------|
 | Rupa Das | das@example.com | GDVGCNPYED7FFJ65MAGEP2V7B4HVLJ5HXQQNQE7KSXTDDBMX3LSP2EEB | [bcfc71b](https://github.com/anindhabiswas25/InvestX/commit/bcfc71b) | The platform feels too bright during evening use,hard on the eyes | Glassmorphism effects with backdrop blur for premium feel |
-| Puja Barai | puja@gmail.com | GBEUK7NAW6JIXCAOH7OUJMUKVCE44E4U2EC6LGX2JOEK6LOGZPWX23TO | [9f2293e](https://github.com/anindhabiswas25/InvestX/commit/9f2293e) | Mobile navbar takes up too much space,the pill design looks weird on small screens | ull-width flat bar on mobile (clean, simple) |
+| Puja Barai | puja@gmail.com | GBEUK7NAW6JIXCAOH7OUJMUKVCE44E4U2EC6LGX2JOEK6LOGZPWX23TO | [9f2293e](https://github.com/anindhabiswas25/InvestX/commit/9f2293e) | Mobile navbar takes up too much space,the pill design looks weird on small screens | Full-width flat bar on mobile (clean, simple) |
 | Priya Pal | priya@gmail.com | GCVCHO43YMPEHBDWOVKP5Y2XZWEUHCZNPIGJRZAFFFGWMNGO5UVUMCO3 | [36dd3c7](https://github.com/anindhabiswas25/InvestX/commit/36dd3c7) | The UI feels static and unresponsive | Smooth page transitions and modal animations |
 
 ---
