@@ -138,11 +138,15 @@ graph TD
 ## 📢 User Feed Implementation
 
 | User Name | User Email | User Wallet Address | Commit ID | User's Feedback | Implemented |
-|----------|-----------|---------------------|-----------|------------------|---------------|
-| Rupa Das | das@example.com | GDVGCNPYED7FFJ65MAGEP2V7B4HVLJ5HXQQNQE7KSXTDDBMX3LSP2EEB | [bcfc71b](https://github.com/anindhabiswas25/InvestX/commit/bcfc71b) | The platform feels too bright during evening use,hard on the eyes | Glassmorphism effects with backdrop blur for premium feel |
-| Puja Barai | puja@gmail.com | GBEUK7NAW6JIXCAOH7OUJMUKVCE44E4U2EC6LGX2JOEK6LOGZPWX23TO | [9f2293e](https://github.com/anindhabiswas25/InvestX/commit/9f2293e) | Mobile navbar takes up too much space,the pill design looks weird on small screens | Full-width flat bar on mobile (clean, simple) |
-| Priya Pal | priya@gmail.com | GCVCHO43YMPEHBDWOVKP5Y2XZWEUHCZNPIGJRZAFFFGWMNGO5UVUMCO3 | [36dd3c7](https://github.com/anindhabiswas25/InvestX/commit/36dd3c7) | The UI feels static and unresponsive | Smooth page transitions and modal animations |
-
+|----------|-----------|---------------------|-----------|------------------|-------------|
+| Rupa Das | das@example.com | GDVGCNPYED7FFJ65MAGEP2V7B4HVLJ5HXQQNQE7KSXTDDBMX3LSP2EEB | [bcfc71b](https://github.com/anindhabiswas25/InvestX/commit/bcfc71b) | Platform too bright at night | Glassmorphism + dark-friendly UI |
+| Puja Barai | puja@gmail.com | GBEUK7NAW6JIXCAOH7OUJMUKVCE44E4U2EC6LGX2JOEK6LOGZPWX23TO | [9f2293e](https://github.com/anindhabiswas25/InvestX/commit/9f2293e) | Mobile navbar not optimized | Full-width responsive navbar |
+| Priya Pal | priya@gmail.com | GCVCHO43YMPEHBDWOVKP5Y2XZWEUHCZNPIGJRZAFFFGWMNGO5UVUMCO3 | [36dd3c7](https://github.com/anindhabiswas25/InvestX/commit/36dd3c7) | UI feels static | Smooth animations & transitions |
+| Roni Dev | dev@investx.io | GCVDMNBJNKZFW5RVCARGIUAAAL364ODLPYDYM4UKGUJTS6NZG55H3M2J | [55ed092](https://github.com/anindhabiswas25/InvestX/commit/55ed092) | State management, API chaos, wallet/session issues | Context API, service layer, utilities |
+| Akash Biswas | akash@investx.io | GADWGNTRTYMFBBMVPFT6K46NTV3QCRNZZVHEX4IXWUFWA7GMUSAB7IM6 | [1c2bfa9](https://github.com/anindhabiswas25/InvestX/commit/1c2bfa9) | Inconsistent UI & poor UX | Design system + reusable components |
+| Tanvi Mishra | tanvi@gmail.com | GBB5NZHPP5I3ENL3MIT4WEARDNPSBI7GY4CUUVWWMZVC4ZWOXU22TZEE | [2904277](https://github.com/anindhabiswas25/InvestX/commit/2904277) | Missing dashboards & flows | Full app pages (investor, DAO, admin) |
+| Minakshi Lora | lora@gmail.com | GB7DTSTGE3O2X2VMANRX3PDNOB2DNJXHRVTX57QN45AJCQCVVJHUEA2X | [b931094](https://github.com/anindhabiswas25/InvestX/commit/b931094) | Poor documentation | Clean README + setup docs |
+| Tonmoy Das | das@gmail.com | GBGKDZ5ARVSOC62IUFJ3VF25YWZ2YH7VQHBGUJJQWAUARZILXOW7BC6P | [daef4d4](https://github.com/anindhabiswas25/InvestX/commit/daef4d4) | Code quality issues | Removed unused code, ESLint clean |
 ---
 
 ## Complete User Flows
