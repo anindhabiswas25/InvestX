@@ -120,6 +120,11 @@ graph TD
 
 ---
 
+## Monitoring Dashboard
+<img width="2879" height="1755" alt="Screenshot from 2026-04-13 13-34-34" src="https://github.com/user-attachments/assets/ce1c7fd3-5a13-4b95-b500-902a7048f7b3" />
+
+----
+
 ## Deployed Contracts
 
 *All contracts deployed on the Stellar Testnet.*
